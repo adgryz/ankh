@@ -1,0 +1,27 @@
+Day 1
+- Game board
+- Actions board
+- Events board
+- Devotion board
+
+Day 2
+- Guardians cards
+- Gods boards
+- Minor upgreads in rest of boards
+
+Day 3
+- connect logic 
+- Game logic initialization
+- Turns and messages
+- Unlock Ankh Power action
+- Gain Followers action
+
+Day 4
+- Figures pool
+- Summon Figure action
+
+TODOS:
+- Move Figures action
+- Possibility to make 2 actions per round
+- Control Monument event
+- REGIONS XD

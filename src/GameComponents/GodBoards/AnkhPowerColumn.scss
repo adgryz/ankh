@@ -1,0 +1,47 @@
+.ankhPowerColumn {
+    width: calc(100% / 3);
+    height: 100%; 
+    border-right: 1px solid black;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 10px;;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .tokensTrack {
+        display: flex;
+        position: relative;
+        margin-top: 5px;
+        border-top: 1px solid black;
+        padding: 10px 0 5px;
+        justify-content: space-around;
+
+        .powerSlot {
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid brown;
+        }
+
+        .columnNumber {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            background: brown;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            border-radius: 50%;
+            color: rgb(238, 224, 206);
+            transform: translate(-50%, -50%);
+        }
+    }
+}

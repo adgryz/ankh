@@ -1,0 +1,67 @@
+.godBoard {
+    width: 470px;
+    height: 250px;
+    margin-top: 10px;
+    display: flex;
+    background: rgb(238, 224, 206);
+    border-top-width: 8px;
+    border-bottom-width: 8px;
+    border-style: solid;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+
+    .portrait {
+        width: 25%;
+        border-right: 1px solid black;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+
+        .description {
+            background-color: brown;
+            color: rgb(238, 224, 206);
+            text-align: center;
+            padding: 4px 0;
+            .name {
+                font-weight: bold;
+                font-size: 12px;
+                text-transform: capitalize;
+            }
+            .title {
+                font-size: 10px;
+            }
+        }
+
+        .image {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .followers {
+            position: absolute;
+            width: 100%;
+            height: 25px;
+            bottom: 0;
+            background: brown;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .count {
+                font-size: 12px;
+                font-weight: bold;
+                margin: 5px;
+                color: rgb(238, 224, 206);
+            }
+
+            .icon{
+                filter: invert(1);
+            }
+        }
+    }
+
+    .powers {
+        width: 75%;
+        display: flex;
+    }
+}

@@ -1,0 +1,32 @@
+.actionRow {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 18px 10px 8px;
+    border: 2px solid brown;
+    margin-bottom: 7px;
+    width: 100%;
+    justify-content: space-between;
+
+    .title {
+        background: brown;
+        padding: 5px;
+        color: rgb(238, 224, 206);
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-size: 10px;
+    }
+
+    .choiceButton {
+        background: salmon;
+        padding: 5px;
+        color: rgb(238, 224, 206);
+        position: absolute;
+        border-radius: 4px;
+        cursor: pointer;
+        top: 0;
+        right: 0;
+        font-size: 10px;
+    }
+}

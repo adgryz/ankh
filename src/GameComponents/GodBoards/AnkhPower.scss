@@ -1,0 +1,28 @@
+.ankhPower {
+    display: flex;
+    height:  38px;
+    overflow: hidden;
+    margin-bottom: 5px;
+    .powerSlot {
+        min-width: 26px;
+        height: 26px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 3px solid brown;
+        margin-right: 5px;
+    }
+
+    .name {
+        font-weight: bold;
+        padding-top: 3px;
+        font-size: 8px;
+        border-top-width: 1px;
+        border-style: solid;
+    }
+    .description {
+        font-size: 8px;
+    }
+}

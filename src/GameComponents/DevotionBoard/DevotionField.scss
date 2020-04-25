@@ -1,0 +1,21 @@
+.devotionField {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    position: absolute;
+    border-width: 3px;
+    border-style: solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .playerBackground {
+        width: 26px;
+        height: 26px; 
+        border-radius: 50%;
+        position: absolute;
+        display: flex;
+        overflow: hidden;
+        opacity: 0.8;
+    }
+}

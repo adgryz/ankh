@@ -1,0 +1,22 @@
+.devotionBoard {
+    position: relative ;
+    width: 156px;
+    background: rgb(238, 224, 206);
+    border: 3px solid brown;
+    padding: 10px;
+    height: 470px;
+    margin: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.devotionTitle {
+    font-size: 12px;
+    padding: 3px 10px;
+    color: rgb(238, 224, 206);
+    background: brown;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
