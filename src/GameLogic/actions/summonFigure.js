@@ -2,7 +2,7 @@ import gameReducer, { GAME_ACTIONS } from 'GameLogic/game';
 import figuresReducer from 'GameLogic/figures';
 import boardReducer from 'GameLogic/board';
 
-import { isAnyAdjacent } from 'GameLogic/boardUtils';
+import { isAnyAdjacentAndInSameRegion } from 'GameLogic/boardUtils';
 import { getPlayerMonumentsAndFigures } from '../selectors';
 import { endActionEffect } from 'GameLogic/actions/actions';
 
@@ -26,7 +26,7 @@ export const summonFigureEffect = ({ x, y, }) => (dispatch, getState) => {
         return;
     }
     const playerFiguresAndMonumentsPositions = getPlayerMonumentsAndFigures(monuments, figures, playerId);
-    if (!isAnyAdjacent(x, y, playerFiguresAndMonumentsPositions)) {
+    if (!isAnyAdjacentAndInSameRegion(x, y, playerFiguresAndMonumentsPositions, board)) {
         alert('Summoned figure has to be adjacent to your monument or figure');
         return;
     }

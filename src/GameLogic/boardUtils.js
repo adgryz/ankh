@@ -48,6 +48,13 @@ export const isAnyAdjacent = (x1, y1, list) => {
     return list.some(a => areAdjacent(x1, y1, a.x, a.y))
 }
 
+
+export const isAnyAdjacentAndInSameRegion = (x1, y1, list, board) => {
+    return list.some(a => areAdjacent(x1, y1, a.x, a.y)
+        && board[x1][y1].region === board[a.x][a.y].region)
+}
+
+
 const getHash = (x, y) => 10 * x + y;
 const getValue = hash => ({ x: parseInt(hash / 10), y: hash % 10 });
 

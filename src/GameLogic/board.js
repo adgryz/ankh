@@ -3,7 +3,7 @@ import { boardConfig } from '../GameComponents/Board/boardConfig';
 
 const getInitialState = () => {
     return boardConfig.map(
-        ({ fields }) => [...fields].map(field => ({ areaType: field }))
+        ({ fields }) => [...fields].map(field => ({ areaType: field[0], region: field[1] }))
     )
 }
 

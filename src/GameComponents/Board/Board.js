@@ -1,6 +1,7 @@
 import React from 'react';
 
 import HexColumn from './HexColumn';
+import Borders from './Borders/Borders';
 
 import './Board.scss'
 // first and last col has offset 1
@@ -15,6 +16,7 @@ const Board = ({ board }) => {
                     columnNumber={index}
                     columnData={board[index]} />)
             }
+            <Borders />
         </div>
     )
 }
