@@ -20,6 +20,13 @@ Day 4
 - Figures pool
 - Summon Figure action
 
+Day 5
+- Move figure with highlight
+
+Day 6
+- 1 or 2 actions to play
+- refactoring
+
 TODOS:
 - Move Figures action
 - Possibility to make 2 actions per round

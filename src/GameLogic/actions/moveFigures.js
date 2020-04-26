@@ -29,7 +29,11 @@ export const selectFigureToMoveEffect = ({ x, y }) => (dispatch, getState) => {
 }
 
 export const moveFigureEffect = ({ x, y }) => (dispatch, getState) => {
-    const { game, figures } = getState();
+    const { game, figures, board } = getState();
+    if (!board[x][y].isPreview) {
+        alert('Cannot move figure more than 3 hexes');
+        return;
+    }
     const selectedFigureId = game.selectedFigureId;
     const selectedFigure = getFigureById(selectedFigureId, figures);
     dispatch(boardReducer.actions.moveFigure({
@@ -42,7 +46,6 @@ export const moveFigureEffect = ({ x, y }) => (dispatch, getState) => {
     dispatch(gameReducer.actions.setSelectedFigureId({ figureId: undefined }));
     dispatch(gameReducer.actions.setActiveGameAction({ actionId: GAME_ACTIONS.selectFigureToMove }));
 
-    // No more figures to move -TODO difference one
     const { game: game2 } = getState();
     const playerFigures = game2.players[game2.currentPlayerId].figures;
     const figuresCount = playerFigures.godsIds.length + playerFigures.warriorsIds.length + playerFigures.sentinelsIds.length;
