@@ -1,6 +1,7 @@
 import gameReducer, { GAME_ACTIONS } from 'GameLogic/game';
 import { ACTIONS_IDS } from './const'
 import { gainFollowersEffect } from './gainFollowers';
+import { resolveCurrentEventEffect } from 'GameLogic/events/events';
 
 export const selectActionEffect = ({ actionId }) => (dispatch, getState) => {
     dispatch(gameReducer.actions.setCurrentActionId({ actionId }))
@@ -40,11 +41,10 @@ export const endActionEffect = () => (dispatch, getState) => {
 
     // Action reached max index
     if (nextGame.actions[actionId].index === nextGame.actions[actionId].maxIndex) {
-        dispatch(gameReducer.actions.moveEventIndex());
-        // actions turn ends, but player still should be able to play the event TODO
-        // PLAY EVENT HERE
         dispatch(gameReducer.actions.resetActionIndex({ actionId }));
-        dispatch(gameReducer.actions.endTurn());
+
+        dispatch(gameReducer.actions.moveEventIndex());
+        dispatch(resolveCurrentEventEffect());
         return;
     }
 

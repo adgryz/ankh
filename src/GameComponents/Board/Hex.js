@@ -8,12 +8,14 @@ import './Hex.scss';
 import { GAME_ACTIONS } from 'GameLogic/game'
 import { summonFigureEffect } from 'GameLogic/actions/summonFigure';
 import { selectFigureToMoveEffect, moveFigureEffect } from 'GameLogic/actions/moveFigures';
+import { controlMonumentEffect } from 'GameLogic/events/controlMonument';
 
 const highlightColor = 'salmon';
 const selectingActions = [
     GAME_ACTIONS.summonFigure,
     GAME_ACTIONS.selectFigureToMove,
     GAME_ACTIONS.moveFigure,
+    GAME_ACTIONS.selectMonumentToControl,
 ]
 
 const dispatchCurrentAction = (dispatch, currentAction, x, y) => {
@@ -27,6 +29,8 @@ const dispatchCurrentAction = (dispatch, currentAction, x, y) => {
         case GAME_ACTIONS.moveFigure:
             dispatch(moveFigureEffect({ x, y }));
             return;
+        case GAME_ACTIONS.selectMonumentToControl:
+            dispatch(controlMonumentEffect({ x, y }))
         default:
             return;
     }

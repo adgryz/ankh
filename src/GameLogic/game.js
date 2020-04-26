@@ -105,7 +105,11 @@ export const GAME_ACTIONS = {
     summonFigure: 'summonFigure',
 
     gainFollowers: 'gainFollowers',
-    unlockAnkhPower: 'unlockAnkhPower'
+    unlockAnkhPower: 'unlockAnkhPower',
+
+    selectMonumentToControl: 'selectMonumentToControl',
+    controlMonument: 'controlMonument'
+
 }
 
 const getGameActionForActionId = actionId => {
@@ -127,6 +131,10 @@ export const isDuringAction = currentGameActionId => {
     return [GAME_ACTIONS.moveFigure, GAME_ACTIONS.selectFigureToSummon].includes(currentGameActionId)
 }
 
+export const isEventAction = currentGameActionId => {
+    return [GAME_ACTIONS.selectMonumentToControl].includes(currentGameActionId)
+}
+
 export const getMessageForGameAction = gameAction => {
     switch (gameAction) {
         case GAME_ACTIONS.selectAction:
@@ -141,6 +149,8 @@ export const getMessageForGameAction = gameAction => {
             return "summon figure";
         case GAME_ACTIONS.unlockAnkhPower:
             return "unlock Ankh power";
+        case GAME_ACTIONS.selectMonumentToControl:
+            return 'take control of monument';
         default:
             return 'no-action';
     }
@@ -222,6 +232,38 @@ const game = createSlice({
         // BOARD
         setSelectedFigureId: (state, { payload }) => {
             state.selectedFigureId = payload.figureId
+        },
+        // PLAYER MONUMENTS AND FIGURES
+        addMonumentToCurrentPlayer: (state, { payload }) => {
+            const { monumentId } = payload;
+            const playerMonuments = state.players[state.currentPlayerId].monuments;
+
+            if (monumentId.startsWith('o')) {
+                playerMonuments.obelisksIds.push(monumentId);
+            }
+            if (monumentId.startsWith('p')) {
+                playerMonuments.pyramidsIds.push(monumentId);
+            }
+            if (monumentId.startsWith('t')) {
+                playerMonuments.templesIds.push(monumentId);
+            }
+        },
+        removeMonumentFromPlayer: (state, { payload }) => {
+            const { monumentId, playerId } = payload;
+            const playerMonuments = state.players[playerId].monuments;
+
+            if (monumentId.startsWith('o')) {
+                const id = playerMonuments.obelisksIds.findIndex(id => id === monumentId);
+                playerMonuments.obelisksIds.splice(monumentId, 1);
+            }
+            if (monumentId.startsWith('p')) {
+                const id = playerMonuments.pyramidsIds.findIndex(id => id === monumentId);
+                playerMonuments.pyramidsIds.splice(monumentId, 1);
+            }
+            if (monumentId.startsWith('t')) {
+                const id = playerMonuments.templesIds.findIndex(id => id === monumentId);
+                playerMonuments.templesIds.splice(monumentId, 1);
+            }
         }
     },
 })

@@ -56,6 +56,10 @@ const board = createSlice({
             state[to.x][to.y].figureId = state[from.x][from.y].figureId;
             state[to.x][to.y].playerId = state[from.x][from.y].playerId;
             state[from.x][from.y].figureId = undefined;
+        },
+        changeMonumentOwner: (state, { payload }) => {
+            const { x, y, playerId } = payload;
+            state[x][y].playerId = playerId;
         }
     },
 })

@@ -17,22 +17,22 @@ const EventField = ({ isActive, colorCode, cords }) => {
             left: cords.x,
             top: cords.y,
         }}>
-        {colorCode === 'start' && <img alt="event" src={canoe} width={18} height={18} />}
-        {colorCode === 'battle' && <img alt="event" src={battle} width={18} height={18} />}
-        {colorCode === 'camel' && <img alt="event" src={camel} width={18} height={18} />}
-        {colorCode === 'control' && <img alt="event" src={pyramid} width={18} height={18} />}
+        {colorCode === 'START' && <img alt="event" src={canoe} width={18} height={18} />}
+        {colorCode === 'BATTLE' && <img alt="event" src={battle} width={18} height={18} />}
+        {colorCode === 'CAMEL' && <img alt="event" src={camel} width={18} height={18} />}
+        {colorCode === 'CONTROL' && <img alt="event" src={pyramid} width={18} height={18} />}
     </div>
 }
 
 const getColor = (colorCode) => {
     switch (colorCode) {
-        case 'battle':
+        case 'BATTLE':
             return 'red';
-        case 'start':
+        case 'START':
             return 'yellow';
-        case 'camel':
+        case 'CAMEL':
             return 'burlywood';
-        case 'control':
+        case 'CONTROL':
             return 'orange';
         default:
             return 'green';

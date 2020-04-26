@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import './InfoBox.scss';
 
-import gameReducer, { getMessageForGameAction, isDuringAction, GAME_ACTIONS } from 'GameLogic/game';
+import gameReducer, { getMessageForGameAction, isDuringAction, GAME_ACTIONS, isEventAction } from 'GameLogic/game';
 import { endActionEffect } from 'GameLogic/actions/actions';
 
 const InfoBox = () => {
@@ -22,11 +22,11 @@ const InfoBox = () => {
         <div className="infoBox">
             <div>{`${currentPlayer.name}: ${information}`}</div>
             {
-                playedActions > 0 && !isDuringAction(currentGameAction) && currentGameAction !== GAME_ACTIONS.selectAction &&
+                playedActions > 0 && !isDuringAction(currentGameAction) && !isEventAction(currentGameAction) && currentGameAction !== GAME_ACTIONS.selectAction &&
                 <div className="endTurnButton" onClick={endAction}>End Action</div>
             }
             {
-                playedActions > 0 && currentGameAction === GAME_ACTIONS.selectAction &&
+                playedActions > 0 && (currentGameAction === GAME_ACTIONS.selectAction || isEventAction(currentGameAction)) &&
                 <div className="endTurnButton" onClick={endTurn}>End Turn</div>
             }
         </div>

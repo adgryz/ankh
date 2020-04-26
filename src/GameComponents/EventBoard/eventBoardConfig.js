@@ -1,26 +1,26 @@
 export const eventBoardConfig = [
-    'start',
+    'START',
 
-    'control',
-    'control',
-    'control',
-    'battle',
-    'camel',
+    'CONTROL',
+    'CONTROL',
+    'CONTROL',
+    'BATTLE',
+    'CAMEL',
 
-    'control',
-    'control',
-    'battle',
-    'camel',
+    'CONTROL',
+    'CONTROL',
+    'BATTLE',
+    'CAMEL',
 
-    'control',
-    'control',
-    'battle',
-    'camel',
+    'CONTROL',
+    'CONTROL',
+    'BATTLE',
+    'CAMEL',
 
-    'control',
-    'battle',
+    'CONTROL',
+    'BATTLE',
 
-    'control',
-    'control',
-    'battle'
+    'CONTROL',
+    'CONTROL',
+    'BATTLE'
 ]

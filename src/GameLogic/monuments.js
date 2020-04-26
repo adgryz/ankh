@@ -28,7 +28,19 @@ const monuments = createSlice({
     name: 'monuments',
     initialState: getInitialState(),
     reducers: {
+        setMonumentPlayer: (state, { payload }) => {
+            const { monumentId, playerId } = payload;
 
+            if (monumentId.startsWith('o')) {
+                state.obelisks[monumentId].playerId = playerId;
+            }
+            if (monumentId.startsWith('p')) {
+                state.pyramids[monumentId].playerId = playerId;
+            }
+            if (monumentId.startsWith('t')) {
+                state.temples[monumentId].playerId = playerId;
+            }
+        }
     },
 })
 
