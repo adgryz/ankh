@@ -1,7 +1,7 @@
 .border {
     width: 25px;
     height: 21.7px;
-    background-color: rgb(88, 186, 224);;
+    background-color: rgb(88, 186, 224);
     margin-right: 10px;
     opacity: 0;
 }
@@ -28,4 +28,9 @@
 
 .isDisplayed {
     opacity: 1;
+}
+
+.isBorder {
+    opacity: 1;
+    background-color: black;
 }

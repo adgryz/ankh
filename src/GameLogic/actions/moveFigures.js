@@ -5,8 +5,8 @@ import { getInThreeDistance } from 'GameLogic/boardUtils';
 import { endActionEffect } from 'GameLogic/actions/actions';
 
 export const selectFigureToMoveEffect = ({ x, y }) => (dispatch, getState) => {
-    const { board, game } = getState();
-    const hex = board[x][y];
+    const { board: { hexes }, game } = getState();
+    const hex = hexes[x][y];
     const { figureId, playerId } = hex;
 
     if (!figureId) {
@@ -29,8 +29,8 @@ export const selectFigureToMoveEffect = ({ x, y }) => (dispatch, getState) => {
 }
 
 export const moveFigureEffect = ({ x, y }) => (dispatch, getState) => {
-    const { game, figures, board } = getState();
-    if (!board[x][y].isPreview) {
+    const { game, figures, board: { hexes } } = getState();
+    if (!hexes[x][y].isPreview) {
         alert('Cannot move figure more than 3 hexes');
         return;
     }

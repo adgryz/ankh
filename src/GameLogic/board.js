@@ -2,9 +2,11 @@ import { createSlice } from '@reduxjs/toolkit'
 import { boardConfig } from '../GameComponents/Board/boardConfig';
 
 const getInitialState = () => {
-    return boardConfig.map(
-        ({ fields }) => [...fields].map(field => ({ areaType: field[0], region: field[1] }))
-    )
+    return {
+        hexes: boardConfig.map(
+            ({ fields }) => [...fields].map(field => ({ areaType: field[0], region: field[1] }))
+        )
+    }
 }
 
 export const initializeFiguresAndMonumentsOnBoardEffect = () => (dispatch, getState) => {
@@ -24,42 +26,43 @@ const board = createSlice({
         setMonuments: (state, { payload }) => {
             const { monuments } = payload;
             monuments.forEach(({ id, x, y, playerId }) => {
-                state[x][y].monumentId = id;
-                state[x][y].playerId = playerId;
+                state.hexes[x][y].monumentId = id;
+                state.hexes[x][y].playerId = playerId;
             });
         },
         setFigures: (state, { payload }) => {
             const { figures } = payload;
             figures.forEach(({ id, x, y, playerId }) => {
-                state[x][y].figureId = id;
-                state[x][y].playerId = playerId;
+                state.hexes[x][y].figureId = id;
+                state.hexes[x][y].playerId = playerId;
             });
         },
         setPreview: (state, { payload }) => {
             const { previewList } = payload;
             previewList.forEach(({ x, y }) => {
-                const hex = state[x][y];
+                const hex = state.hexes[x][y];
                 if (hex.areaType !== 'W' && !hex.figureId && !hex.monumentId) {
-                    state[x][y].isPreview = true;
+                    state.hexes[x][y].isPreview = true;
                 }
             });
         },
         clearPreview: (state) => {
-            state.forEach(
+            state.hexes.forEach(
                 col => col.forEach(
                     cell => cell.isPreview = undefined
                 )
             )
         },
         moveFigure: (state, { payload }) => {
+            const { hexes } = state;
             const { from, to } = payload;
-            state[to.x][to.y].figureId = state[from.x][from.y].figureId;
-            state[to.x][to.y].playerId = state[from.x][from.y].playerId;
-            state[from.x][from.y].figureId = undefined;
+            hexes[to.x][to.y].figureId = hexes[from.x][from.y].figureId;
+            hexes[to.x][to.y].playerId = hexes[from.x][from.y].playerId;
+            hexes[from.x][from.y].figureId = undefined;
         },
         changeMonumentOwner: (state, { payload }) => {
             const { x, y, playerId } = payload;
-            state[x][y].playerId = playerId;
+            state.hexes[x][y].playerId = playerId;
         }
     },
 })

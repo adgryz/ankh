@@ -6,8 +6,10 @@ export const resolveCurrentEventEffect = () => (dispatch, getState) => {
     const { game } = getState();
     const eventId = eventBoardConfig[game.eventIndex]
 
-    // Summon figure action ends immediately if player has no figures in pool
     if (eventId === EVENTS_IDS.CONTROL) {
         dispatch(gameReducer.actions.setActiveGameAction({ actionId: GAME_ACTIONS.selectMonumentToControl }));
+    }
+    if (eventId === EVENTS_IDS.RIVER) {
+        dispatch(gameReducer.actions.setActiveGameAction({ actionId: GAME_ACTIONS.selectBorderToPutRiver }));
     }
 }

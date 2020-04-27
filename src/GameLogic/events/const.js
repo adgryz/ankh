@@ -1,6 +1,6 @@
 
 export const EVENTS_IDS = {
     CONTROL: 'CONTROL',
-    CAMELS: 'CAMELS',
+    RIVER: 'RIVER',
     BATTLE: 'BATTLE',
 }

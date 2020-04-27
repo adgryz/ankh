@@ -139,18 +139,29 @@ export const getMessageForGameAction = gameAction => {
     switch (gameAction) {
         case GAME_ACTIONS.selectAction:
             return "choose action";
+
         case GAME_ACTIONS.selectFigureToMove:
             return "select figure to move";
         case GAME_ACTIONS.moveFigure:
             return "move figure";
+
         case GAME_ACTIONS.selectFigureToSummon:
             return "select figure to summon";
         case GAME_ACTIONS.summonFigure:
             return "summon figure";
+
         case GAME_ACTIONS.unlockAnkhPower:
             return "unlock Ankh power";
+
         case GAME_ACTIONS.selectMonumentToControl:
             return 'take control of monument';
+
+        case GAME_ACTIONS.selectBorderToPutRiver:
+            return 'create new border consisting up to 6 river borders';
+        case GAME_ACTIONS.selectWhichRegionWillPreserveItsNumber:
+            return 'select which region will preserve its number';
+        case GAME_ACTIONS.selectRegionToSwitchNumbers:
+            return 'select region to switch numbers with newly created region (highest number)';
         default:
             return 'no-action';
     }

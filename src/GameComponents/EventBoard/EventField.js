@@ -3,7 +3,7 @@ import React from 'react';
 import './EventField.scss';
 import canoe from './canoe.svg';
 import battle from './battle.svg';
-import camel from './camel.svg';
+import wave from './wave.svg';
 import pyramid from './pyramid.svg';
 
 
@@ -19,7 +19,7 @@ const EventField = ({ isActive, colorCode, cords }) => {
         }}>
         {colorCode === 'START' && <img alt="event" src={canoe} width={18} height={18} />}
         {colorCode === 'BATTLE' && <img alt="event" src={battle} width={18} height={18} />}
-        {colorCode === 'CAMEL' && <img alt="event" src={camel} width={18} height={18} />}
+        {colorCode === 'RIVER' && <img alt="event" src={wave} width={18} height={18} />}
         {colorCode === 'CONTROL' && <img alt="event" src={pyramid} width={18} height={18} />}
     </div>
 }
@@ -30,8 +30,8 @@ const getColor = (colorCode) => {
             return 'red';
         case 'START':
             return 'yellow';
-        case 'CAMEL':
-            return 'burlywood';
+        case 'RIVER':
+            return 'lightblue';
         case 'CONTROL':
             return 'orange';
         default:

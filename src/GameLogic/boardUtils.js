@@ -49,9 +49,9 @@ export const isAnyAdjacent = (x1, y1, list) => {
 }
 
 
-export const isAnyAdjacentAndInSameRegion = (x1, y1, list, board) => {
+export const isAnyAdjacentAndInSameRegion = (x1, y1, list, hexes) => {
     return list.some(a => areAdjacent(x1, y1, a.x, a.y)
-        && board[x1][y1].region === board[a.x][a.y].region)
+        && hexes[x1][y1].region === hexes[a.x][a.y].region)
 }
 
 

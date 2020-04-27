@@ -1,21 +1,21 @@
 export const eventBoardConfig = [
     'START',
 
-    'CONTROL',
+    'RIVER',
     'CONTROL',
     'CONTROL',
     'BATTLE',
-    'CAMEL',
+    'RIVER',
 
     'CONTROL',
     'CONTROL',
     'BATTLE',
-    'CAMEL',
+    'RIVER',
 
     'CONTROL',
     'CONTROL',
     'BATTLE',
-    'CAMEL',
+    'RIVER',
 
     'CONTROL',
     'BATTLE',

@@ -12,10 +12,10 @@ export const selectFigureToSummonEffect = ({ figureId }) => (dispatch, getState)
 }
 
 export const summonFigureEffect = ({ x, y, }) => (dispatch, getState) => {
-    const { board, figures, monuments, game } = getState();
+    const { board: { hexes }, figures, monuments, game } = getState();
     const playerId = game.currentPlayerId;
     const figureId = game.selectedFigureFromPool;
-    const hex = board[x][y];
+    const hex = hexes[x][y];
 
     if (hex.areaType === 'W') {
         alert('Cannot summon into water');
@@ -26,7 +26,7 @@ export const summonFigureEffect = ({ x, y, }) => (dispatch, getState) => {
         return;
     }
     const playerFiguresAndMonumentsPositions = getPlayerMonumentsAndFigures(monuments, figures, playerId);
-    if (!isAnyAdjacentAndInSameRegion(x, y, playerFiguresAndMonumentsPositions, board)) {
+    if (!isAnyAdjacentAndInSameRegion(x, y, playerFiguresAndMonumentsPositions, hexes)) {
         alert('Summoned figure has to be adjacent to your monument or figure');
         return;
     }

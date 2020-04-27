@@ -7,8 +7,8 @@ import { isAnyAdjacentAndInSameRegion } from 'GameLogic/boardUtils';
 
 export const controlMonumentEffect = ({ x, y }) => (dispatch, getState) => {
     // TODO: Check if there are any neutral(or enemy) monuments adjacent to player figures, if not => end turn immediately
-    const { game, monuments, board, figures } = getState();
-    const selectedMonumentId = board[x][y].monumentId;
+    const { game, monuments, board: { hexes }, figures } = getState();
+    const selectedMonumentId = hexes[x][y].monumentId;
     const playerId = game.players[game.currentPlayerId].id;
 
     if (!selectedMonumentId) {
@@ -17,12 +17,12 @@ export const controlMonumentEffect = ({ x, y }) => (dispatch, getState) => {
     }
 
     const playerFiguresPositions = getPlayerFigures(figures, playerId);
-    if (!isAnyAdjacentAndInSameRegion(x, y, playerFiguresPositions, board)) {
+    if (!isAnyAdjacentAndInSameRegion(x, y, playerFiguresPositions, hexes)) {
         alert('You must have adjacent figure to monument');
         return;
     }
 
-    const monumentOwnerId = board[x][y].playerId;
+    const monumentOwnerId = hexes[x][y].playerId;
     const neutralMonuments = getNeutralMonuments(monuments);
 
     if (neutralMonuments.length > 0) {
