@@ -3,7 +3,7 @@ import boardReducer from 'GameLogic/board'
 import monumentsReducer from 'GameLogic/monuments'
 
 import { getNeutralMonuments, getPlayerFigures } from 'GameLogic/selectors'
-import { isAnyAdjacentAndInSameRegion } from 'GameLogic/boardUtils';
+import { isAnyAdjacentAndInSameRegion } from 'GameLogic/utils/hexUtils';
 
 export const controlMonumentEffect = ({ x, y }) => (dispatch, getState) => {
     // TODO: Check if there are any neutral(or enemy) monuments adjacent to player figures, if not => end turn immediately

@@ -1,7 +1,7 @@
 .border {
     width: 25px;
     height: 21.7px;
-    background-color: rgb(88, 186, 224);
+    background-color:  rgb(88, 186, 224);
     margin-right: 10px;
     opacity: 0;
 }
@@ -30,7 +30,22 @@
     opacity: 1;
 }
 
-.isBorder {
+.isPreview{
+    opacity: 0.3;
+    background-color: rgb(70, 110, 218);
+    cursor: pointer;
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.isGameBoardDisplayed {
     opacity: 1;
     background-color: black;
+}
+
+.isProspectRiver{
+    opacity: 1;
+    background-color: rgb(70, 110, 218);
+    cursor: auto;
 }

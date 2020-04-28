@@ -1,7 +1,7 @@
 import gameReducer, { GAME_ACTIONS } from 'GameLogic/game';
 import boardReducer from 'GameLogic/board';
 import figuresReducer, { getFigureById } from 'GameLogic/figures';
-import { getInThreeDistance } from 'GameLogic/boardUtils';
+import { getInThreeDistance } from 'GameLogic/utils/hexUtils';
 import { endActionEffect } from 'GameLogic/actions/actions';
 
 export const selectFigureToMoveEffect = ({ x, y }) => (dispatch, getState) => {

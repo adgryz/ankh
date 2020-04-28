@@ -1,5 +1,5 @@
 import gameReducer from 'GameLogic/game';
-import { isAnyAdjacentAndInSameRegion } from 'GameLogic/boardUtils';
+import { isAnyAdjacentAndInSameRegion } from 'GameLogic/utils/hexUtils';
 import { getPlayerAndNeutralMonuments, getPlayerFigures } from '../selectors';
 import { endActionEffect } from 'GameLogic/actions/actions';
 

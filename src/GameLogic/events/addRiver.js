@@ -1,17 +1,38 @@
-import boardReducer from 'GameLogic/board'
+import boardReducer, { BORDER } from 'GameLogic/board'
+import { getConnectedBorders, areConnectedBorders } from 'GameLogic/utils/borderUtils';
 
-export const placeRiver = ({ x, y }) => (dispatch, getState) => {
-    // 1. Show all borders - active borders opacity 1, other opacity 0.5, all with pointer-events
-    dispatch()
-    // 2. When click on border -> check if connected border is active or in temp border
-    //     -> IF(Y) Add border to temp border collection
-    //     -> IF(N) alert('Border has to be connected with other borders')
+export const placeRiverEffect = ({ x, y }) => (dispatch, getState) => {
+    const { board: { prospectRivers, borders } } = getState();
 
-    // 3. Check if last placed border is connected with 2 borders (1 temp and 1 active)
-    //     -> IF(Y) Make temp border active, clear temp border, start ---REGIONS-SPLITTING---
+    const connectedBorders = getConnectedBorders(x, y, borders);
+    const connectedActiveBorders = connectedBorders.filter(
+        ({ x, y }) => [BORDER.GAME, BORDER.RIVER].includes(borders[x][y]))
+    console.log(connectedActiveBorders)
+    if (prospectRivers.length === 0 && connectedActiveBorders.length === 0) {
+        alert('First river must be connected with active borders');
+        return;
+    }
 
-    // 3. Check if temp border length === 6
-    //     -> IF(Y) Alert('Border max length is 6') and clear temp border
+    const lastAddedRiver = prospectRivers[prospectRivers.length - 1];
+    if (prospectRivers.length !== 0 && !areConnectedBorders(x, y, lastAddedRiver.x, lastAddedRiver.y, borders)) {
+        alert('Rivers have to be connected');
+        return;
+    }
+
+    dispatch(boardReducer.actions.addProspectRiver({ x, y }))
+
+    const { board: nextBoard } = getState();
+    // END OF NEW BORDER
+    if ((connectedActiveBorders.length === 2 && nextBoard.prospectRivers.length > 1) || connectedActiveBorders.length === 4) {
+        dispatch(boardReducer.actions.applyProspectRivers());
+        // region splitting
+    }
+
+    if (nextBoard.prospectRivers.length === 6) {
+        alert('Max new river length is 6');
+        dispatch(boardReducer.actions.clearProspectRivers());
+        return;
+    }
 }
 
 // ---RIVERS-PLACING---

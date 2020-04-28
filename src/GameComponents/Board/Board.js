@@ -5,7 +5,7 @@ import Borders from './Borders/Borders';
 
 import './Board.scss'
 // first and last col has offset 1
-const Board = ({ hexes }) => {
+const Board = ({ hexes, borders }) => {
 
     return (
         <div className="board">
@@ -16,7 +16,7 @@ const Board = ({ hexes }) => {
                     columnNumber={index}
                     columnData={hexes[index]} />)
             }
-            <Borders />
+            <Borders borders={borders} />
         </div>
     )
 }

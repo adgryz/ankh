@@ -1,11 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { boardConfig } from '../GameComponents/Board/boardConfig';
+import { hexesConfig, bordersConfig } from './boardConfig';
+
+export const BORDER = {
+    GAME: 1,
+    RIVER: 2,
+    POSSIBLE: 8,
+}
 
 const getInitialState = () => {
     return {
-        hexes: boardConfig.map(
+        hexes: hexesConfig.map(
             ({ fields }) => [...fields].map(field => ({ areaType: field[0], region: field[1] }))
-        )
+        ),
+        borders: bordersConfig,
+        isBordersPreviewActive: false,
+        prospectRivers: [],
     }
 }
 
@@ -23,6 +32,7 @@ const board = createSlice({
     name: 'board',
     initialState: getInitialState(),
     reducers: {
+        // HEXES
         setMonuments: (state, { payload }) => {
             const { monuments } = payload;
             monuments.forEach(({ id, x, y, playerId }) => {
@@ -63,6 +73,22 @@ const board = createSlice({
         changeMonumentOwner: (state, { payload }) => {
             const { x, y, playerId } = payload;
             state.hexes[x][y].playerId = playerId;
+        },
+        // BORDERS
+        toggleBordersPreview: (state, { payload }) => {
+            state.isBordersPreviewActive = payload.isActive;
+        },
+        addProspectRiver: (state, { payload }) => {
+            const { x, y } = payload;
+            state.prospectRivers.push({ x, y });
+        },
+        clearProspectRivers: (state) => {
+            state.prospectRivers = [];
+        },
+        applyProspectRivers: (state) => {
+            state.isBordersPreviewActive = false;
+            state.prospectRivers.forEach(river => state.borders[river.x][river.y] = BORDER.RIVER);
+            state.prospectRivers = [];
         }
     },
 })

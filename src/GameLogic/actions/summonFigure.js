@@ -2,7 +2,7 @@ import gameReducer, { GAME_ACTIONS } from 'GameLogic/game';
 import figuresReducer from 'GameLogic/figures';
 import boardReducer from 'GameLogic/board';
 
-import { isAnyAdjacentAndInSameRegion } from 'GameLogic/boardUtils';
+import { isAnyAdjacentAndInSameRegion } from 'GameLogic/utils/hexUtils';
 import { getPlayerMonumentsAndFigures } from '../selectors';
 import { endActionEffect } from 'GameLogic/actions/actions';
 

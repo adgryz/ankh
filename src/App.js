@@ -20,6 +20,7 @@ function App() {
   const actions = useSelector(({ game }) => game.actions);
   const eventIndex = useSelector(({ game }) => game.eventIndex);
   const hexes = useSelector(({ board }) => board.hexes);
+  const borders = useSelector(({ board }) => board.borders);
   const devotion = Object.values(players).map(({ god, devotion }) => ({
     color: god.color,
     devotion
@@ -34,7 +35,7 @@ function App() {
     <div style={{ display: 'flex' }}>
       <div>
         <div style={{ display: 'flex' }}>
-          <Board hexes={hexes} />
+          <Board hexes={hexes} borders={borders} />
           <div>
             <ActionBoard actions={actions} />
             <EventBoard event={eventIndex} />

@@ -2,6 +2,70 @@ import { createSlice } from '@reduxjs/toolkit'
 import { amun, ra } from './godsSettings/godsSettings';
 import { ACTIONS_IDS } from './actions/const'
 
+export const GAME_ACTIONS = {
+    selectAction: 'selectAction',
+
+    selectFigureToMove: 'selectFigureToMove',
+    moveFigure: 'moveFigure',
+
+    selectFigureToSummon: 'selectFigureToSummon',
+    summonFigure: 'summonFigure',
+
+    gainFollowers: 'gainFollowers',
+    unlockAnkhPower: 'unlockAnkhPower',
+
+    selectMonumentToControl: 'selectMonumentToControl',
+    controlMonument: 'controlMonument'
+
+}
+
+const getGameActionForActionId = actionId => {
+    switch (actionId) {
+        case ACTIONS_IDS.MOVE:
+            return GAME_ACTIONS.selectFigureToMove;
+        case ACTIONS_IDS.SUMMON:
+            return GAME_ACTIONS.selectFigureToSummon;
+        case ACTIONS_IDS.GAIN:
+            return GAME_ACTIONS.gainFollowers;
+        case ACTIONS_IDS.ANKH:
+            return GAME_ACTIONS.unlockAnkhPower;
+        default:
+            return null;
+    }
+}
+
+export const getMessageForGameAction = gameAction => {
+    switch (gameAction) {
+        case GAME_ACTIONS.selectAction:
+            return "choose action";
+
+        case GAME_ACTIONS.selectFigureToMove:
+            return "select figure to move";
+        case GAME_ACTIONS.moveFigure:
+            return "move figure";
+
+        case GAME_ACTIONS.selectFigureToSummon:
+            return "select figure to summon";
+        case GAME_ACTIONS.summonFigure:
+            return "summon figure";
+
+        case GAME_ACTIONS.unlockAnkhPower:
+            return "unlock Ankh power";
+
+        case GAME_ACTIONS.selectMonumentToControl:
+            return 'take control of monument';
+
+        case GAME_ACTIONS.selectBorderToPutRiver:
+            return 'create new border consisting up to 6 river borders';
+        case GAME_ACTIONS.selectWhichRegionWillPreserveItsNumber:
+            return 'select which region will preserve its number';
+        case GAME_ACTIONS.selectRegionToSwitchNumbers:
+            return 'select region to switch numbers with newly created region (highest number)';
+        default:
+            return 'no-action';
+    }
+}
+
 const initialPlayerState = {
     monuments: {
         obelisksIds: [],
@@ -55,8 +119,8 @@ const getInitialState = () => {
             },
             [ACTIONS_IDS.FOLLOWERS]: {
                 id: ACTIONS_IDS.FOLLOWERS,
-                startingIndex: 3,
-                index: 3,
+                startingIndex: 5,
+                index: 5,
                 maxIndex: 6,
                 order: 3,
             },
@@ -95,76 +159,12 @@ export const initializePlayerFiguresAndMonumentsEffect = () => (dispatch, getSta
 }
 const getPlayerObjectIds = (object, playerId) => Object.values(object).filter(x => x.playerId === playerId).map(({ id }) => id);
 
-export const GAME_ACTIONS = {
-    selectAction: 'selectAction',
-
-    selectFigureToMove: 'selectFigureToMove',
-    moveFigure: 'moveFigure',
-
-    selectFigureToSummon: 'selectFigureToSummon',
-    summonFigure: 'summonFigure',
-
-    gainFollowers: 'gainFollowers',
-    unlockAnkhPower: 'unlockAnkhPower',
-
-    selectMonumentToControl: 'selectMonumentToControl',
-    controlMonument: 'controlMonument'
-
-}
-
-const getGameActionForActionId = actionId => {
-    switch (actionId) {
-        case ACTIONS_IDS.MOVE:
-            return GAME_ACTIONS.selectFigureToMove;
-        case ACTIONS_IDS.SUMMON:
-            return GAME_ACTIONS.selectFigureToSummon;
-        case ACTIONS_IDS.GAIN:
-            return GAME_ACTIONS.gainFollowers;
-        case ACTIONS_IDS.ANKH:
-            return GAME_ACTIONS.unlockAnkhPower;
-        default:
-            return null;
-    }
-}
-
 export const isDuringAction = currentGameActionId => {
     return [GAME_ACTIONS.moveFigure, GAME_ACTIONS.selectFigureToSummon].includes(currentGameActionId)
 }
 
 export const isEventAction = currentGameActionId => {
     return [GAME_ACTIONS.selectMonumentToControl].includes(currentGameActionId)
-}
-
-export const getMessageForGameAction = gameAction => {
-    switch (gameAction) {
-        case GAME_ACTIONS.selectAction:
-            return "choose action";
-
-        case GAME_ACTIONS.selectFigureToMove:
-            return "select figure to move";
-        case GAME_ACTIONS.moveFigure:
-            return "move figure";
-
-        case GAME_ACTIONS.selectFigureToSummon:
-            return "select figure to summon";
-        case GAME_ACTIONS.summonFigure:
-            return "summon figure";
-
-        case GAME_ACTIONS.unlockAnkhPower:
-            return "unlock Ankh power";
-
-        case GAME_ACTIONS.selectMonumentToControl:
-            return 'take control of monument';
-
-        case GAME_ACTIONS.selectBorderToPutRiver:
-            return 'create new border consisting up to 6 river borders';
-        case GAME_ACTIONS.selectWhichRegionWillPreserveItsNumber:
-            return 'select which region will preserve its number';
-        case GAME_ACTIONS.selectRegionToSwitchNumbers:
-            return 'select region to switch numbers with newly created region (highest number)';
-        default:
-            return 'no-action';
-    }
 }
 
 const game = createSlice({
@@ -278,5 +278,6 @@ const game = createSlice({
         }
     },
 })
+
 
 export default game;
