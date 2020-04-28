@@ -41,8 +41,6 @@ export const endActionEffect = () => (dispatch, getState) => {
 
     // Action reached max index
     if (nextGame.actions[actionId].index === nextGame.actions[actionId].maxIndex) {
-        dispatch(gameReducer.actions.resetActionIndex({ actionId }));
-
         dispatch(gameReducer.actions.moveEventIndex());
         dispatch(resolveCurrentEventEffect());
         return;

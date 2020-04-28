@@ -1,13 +1,13 @@
 import boardReducer, { BORDER } from 'GameLogic/board'
-import { getConnectedBorders, areConnectedBorders } from 'GameLogic/utils/borderUtils';
+import { getConnectedBorders, areConnectedBorders, getBorderAdjacentHexes, hexesHaveCommonActiveBorder } from 'GameLogic/utils/borderUtils';
+import { getAdjacentList } from 'GameLogic/utils/hexUtils';
+import { endEventEffect } from './events';
 
 export const placeRiverEffect = ({ x, y }) => (dispatch, getState) => {
     const { board: { prospectRivers, borders } } = getState();
-
     const connectedBorders = getConnectedBorders(x, y, borders);
     const connectedActiveBorders = connectedBorders.filter(
         ({ x, y }) => [BORDER.GAME, BORDER.RIVER].includes(borders[x][y]))
-    console.log(connectedActiveBorders)
     if (prospectRivers.length === 0 && connectedActiveBorders.length === 0) {
         alert('First river must be connected with active borders');
         return;
@@ -24,35 +24,89 @@ export const placeRiverEffect = ({ x, y }) => (dispatch, getState) => {
     const { board: nextBoard } = getState();
     // END OF NEW BORDER
     if ((connectedActiveBorders.length === 2 && nextBoard.prospectRivers.length > 1) || connectedActiveBorders.length === 4) {
-        dispatch(boardReducer.actions.applyProspectRivers());
-        // region splitting
+        dispatch(splitRegionsEffect())
     }
 
-    if (nextBoard.prospectRivers.length === 6) {
+    if (nextBoard.prospectRivers.length === 7) {
         alert('Max new river length is 6');
         dispatch(boardReducer.actions.clearProspectRivers());
         return;
     }
 }
 
-// ---RIVERS-PLACING---
-// 1. Show all borders - active borders opacity 1, other opacity 0.5, all with pointer-events
-// 2. When click on border -> check if connected border is active or in temp border
-//     -> IF(Y) Add border to temp border collection
-//     -> IF(N) alert('Border has to be connected with other borders')
-// 3. Check if last placed border is connected with 2 borders (1 temp and 1 active)
-//     -> IF(Y) Make temp border active, clear temp border, start ---REGIONS-SPLITTING---
-// 3. Check if temp border length === 6
-//     -> IF(Y) Alert('Border max length is 6') and clear temp border
+const finishRiverPlacementEffect = ({ splittedRegionNumber }) => (dispatch, getState) => {
+    const { board } = getState();
+    const { hexes, maxRegionNumber } = board;
+    let newRegionHexesCount = 0;
+    let splittedRegionHexesCount = 0;
+    hexes.forEach(col => col.forEach(hex => hex.region === maxRegionNumber ? newRegionHexesCount++ : null));
+    hexes.forEach(col => col.forEach(hex => hex.region === splittedRegionNumber ? splittedRegionHexesCount++ : null));
 
-// ---REGIONS-SPLITTING---
-// 1. Create temp copy of board
-// 2. Take first new border, then take 2 adjacent fields to it
-// 3. Chose one of the fields, take new region number, start ---FLOODING-ALGORITHM---
-// 4. Check if both/all regions have at least 6 fields
-//     -> IF(Y) board = tempBoard start ---REGION-NUMBERS-SWAPPING---
-//     -> IF(N) Alert('All regions need to have at least 6 fields'), tempBoard = board, start ---RIVERS-PLACING---
+    if (newRegionHexesCount < 6 || splittedRegionHexesCount < 6) {
+        alert('Both regions have to have at least 6 hexes')
+        // Reverse splitting
+        hexes.forEach((col, x) => col.forEach((hex, y) => {
+            if (hex.region === maxRegionNumber) {
+                dispatch(boardReducer.actions.changeHexRegion({ x, y, regionNumber: splittedRegionNumber }));
+            }
+        }));
+        dispatch(boardReducer.actions.decrementMaxRegionNumber());
+        dispatch(boardReducer.actions.clearProspectRivers());
 
-// ---FLOODING-ALGORITHM---
-// 1. Set region number in field
-// 2. For each neighbour field that isn't connected with border with current field, start ---FLOODING-ALGORITHM---
+        return;
+    }
+
+    dispatch(boardReducer.actions.applyProspectRivers());
+    dispatch(endEventEffect());
+    // TODO: Now player should be able to switch highest region number with other region number
+
+}
+
+const splitRegionsEffect = () => (dispatch, getState) => {
+    dispatch(boardReducer.actions.incrementMaxRegionNumber());
+
+    const { board } = getState();
+    const { prospectRivers, maxRegionNumber, hexes } = board;
+    const firstNewRiver = prospectRivers[0];
+    const [hex1, hex2] = getBorderAdjacentHexes(firstNewRiver.x, firstNewRiver.y);
+    const { x, y } = hex1;
+    dispatch(changeHexAndItsNeighborsRegionEffect({
+        x, y,
+        regionNumber: maxRegionNumber,
+        splittedRegionNumber: hexes[x][y].region
+    }))
+
+    // TODO: There should be choice which region will be new max hex1/hex2
+}
+
+let numberOfActiveRecursiveFunctions = 0;
+
+const changeHexAndItsNeighborsRegionEffect = ({ x, y, regionNumber, splittedRegionNumber }) => (dispatch, getState) => {
+    numberOfActiveRecursiveFunctions++;
+    const { board } = getState();
+    const { borders, hexes, prospectRivers } = board;
+
+    dispatch(boardReducer.actions.changeHexRegion({ x, y, regionNumber }));
+    const adjacentHexes = getAdjacentList(x, y);
+    const hexesToChangeRegion = adjacentHexes
+        .filter(hex2 => {
+            if (!hexes[hex2.x] || !hexes[hex2.x][hex2.y]) {
+                return false;
+            }
+            if (hexes[hex2.x][hex2.y].region === regionNumber) {
+                return false;
+            }
+            if (hexesHaveCommonActiveBorder({ x, y }, hex2, borders, prospectRivers)) {
+                return false;
+            }
+            return true;
+        });
+
+    hexesToChangeRegion.forEach(({ x, y }) => dispatch(changeHexAndItsNeighborsRegionEffect({ x, y, regionNumber })));
+
+    numberOfActiveRecursiveFunctions--;
+    // REGION SPLITTING FINISHED
+    if (numberOfActiveRecursiveFunctions === 0) {
+        dispatch(finishRiverPlacementEffect({ splittedRegionNumber }))
+    }
+}

@@ -119,8 +119,8 @@ const getInitialState = () => {
             },
             [ACTIONS_IDS.FOLLOWERS]: {
                 id: ACTIONS_IDS.FOLLOWERS,
-                startingIndex: 5,
-                index: 5,
+                startingIndex: 3,
+                index: 3,
                 maxIndex: 6,
                 order: 3,
             },
@@ -200,9 +200,9 @@ const game = createSlice({
             const { actionId } = payload;
             state.actions[actionId].index++;
         },
-        resetActionIndex: (state, { payload }) => {
-            const { actionId } = payload;
-            state.actions[actionId].index = state.actions[actionId].startingIndex;
+        resetActionIndex: (state) => {
+            const { currentActionId } = state;
+            state.actions[currentActionId].index = state.actions[currentActionId].startingIndex;
         },
         moveEventIndex: (state) => {
             state.eventIndex++;

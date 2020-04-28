@@ -15,6 +15,7 @@ const getInitialState = () => {
         borders: bordersConfig,
         isBordersPreviewActive: false,
         prospectRivers: [],
+        maxRegionNumber: 3,
     }
 }
 
@@ -89,6 +90,17 @@ const board = createSlice({
             state.isBordersPreviewActive = false;
             state.prospectRivers.forEach(river => state.borders[river.x][river.y] = BORDER.RIVER);
             state.prospectRivers = [];
+        },
+        // REGIONS
+        incrementMaxRegionNumber: (state) => {
+            state.maxRegionNumber++;
+        },
+        decrementMaxRegionNumber: (state) => {
+            state.maxRegionNumber--;
+        },
+        changeHexRegion: (state, { payload }) => {
+            const { x, y, regionNumber } = payload;
+            state.hexes[x][y].region = regionNumber;
         }
     },
 })

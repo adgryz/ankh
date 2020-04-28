@@ -29,7 +29,7 @@ export const hexesConfig = [
         fields: ['W', 'G2', 'G2', 'G3', 'D3', 'D3', 'D3', 'W', 'D3', 'D3']
     },
     {
-        fields: ['W', 'G1', 'G3', 'W', 'D3', 'D3', 'W', 'D3', 'D3']
+        fields: ['W', 'G2', 'G3', 'W', 'D3', 'D3', 'W', 'D3', 'D3']
     },
 
     {

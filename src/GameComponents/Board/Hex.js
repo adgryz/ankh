@@ -59,6 +59,7 @@ const Hex = ({ hexData, columnNumber, hexNumber }) => {
     if (areaType === 'X') {
         backgroundColor = 'transparent';
     } else {
+        // backgroundColor = '#' + 3 * hexData.region + 3 * hexData.region + 3 * hexData.region;
         backgroundColor = getColor(areaType);
     }
 
@@ -87,6 +88,7 @@ const Hex = ({ hexData, columnNumber, hexNumber }) => {
             onMouseOut={handleMouseOut}
             onClick={handleClick}
             style={hexStyles} >
+            {/* {columnNumber + ',' + hexNumber} */}
             {
                 (hexData.figureId || hexData.monumentId) &&
                 <div className="token" style={{ borderColor: playerColor }}>

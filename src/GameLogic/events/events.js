@@ -15,3 +15,8 @@ export const resolveCurrentEventEffect = () => (dispatch, getState) => {
         dispatch(boardReducer.actions.toggleBordersPreview({ isActive: true }))
     }
 }
+
+export const endEventEffect = () => (dispatch) => {
+    dispatch(gameReducer.actions.resetActionIndex());
+    dispatch(gameReducer.actions.endTurn());
+}
