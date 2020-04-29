@@ -16,7 +16,12 @@ export const resolveCurrentEventEffect = () => (dispatch, getState) => {
     }
 }
 
-export const endEventEffect = () => (dispatch) => {
+export const endEventEffect = () => (dispatch, getState) => {
+    const { game } = getState();
+    if (game.currentGameAction === GAME_ACTIONS.selectBorderToPutRiver) {
+        dispatch(boardReducer.actions.toggleBordersPreview({ isActive: false }));
+        dispatch(boardReducer.actions.clearProspectRivers());
+    }
     dispatch(gameReducer.actions.resetActionIndex());
     dispatch(gameReducer.actions.endTurn());
 }

@@ -15,8 +15,9 @@ export const GAME_ACTIONS = {
     unlockAnkhPower: 'unlockAnkhPower',
 
     selectMonumentToControl: 'selectMonumentToControl',
-    controlMonument: 'controlMonument'
+    controlMonument: 'controlMonument',
 
+    selectBorderToPutRiver: 'selectBorderToPutRiver',
 }
 
 const getGameActionForActionId = actionId => {
@@ -164,7 +165,7 @@ export const isDuringAction = currentGameActionId => {
 }
 
 export const isEventAction = currentGameActionId => {
-    return [GAME_ACTIONS.selectMonumentToControl].includes(currentGameActionId)
+    return [GAME_ACTIONS.selectMonumentToControl, GAME_ACTIONS.selectBorderToPutRiver].includes(currentGameActionId)
 }
 
 const game = createSlice({

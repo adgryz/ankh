@@ -5,6 +5,7 @@ import './InfoBox.scss';
 
 import gameReducer, { getMessageForGameAction, isDuringAction, GAME_ACTIONS, isEventAction } from 'GameLogic/game';
 import { endActionEffect } from 'GameLogic/actions/actions';
+import { endEventEffect } from 'GameLogic/events/events';
 
 const InfoBox = () => {
     const dispatch = useDispatch();
@@ -17,17 +18,27 @@ const InfoBox = () => {
 
     const endTurn = () => dispatch(gameReducer.actions.endTurn());
     const endAction = () => dispatch(endActionEffect());
+    const endEvent = () => dispatch(endEventEffect());
 
     return (
         <div className="infoBox">
             <div>{`${currentPlayer.name}: ${information}`}</div>
             {
-                playedActions > 0 && !isDuringAction(currentGameAction) && !isEventAction(currentGameAction) && currentGameAction !== GAME_ACTIONS.selectAction &&
+                playedActions > 0
+                && !isDuringAction(currentGameAction)
+                && !isEventAction(currentGameAction)
+                && currentGameAction !== GAME_ACTIONS.selectAction &&
                 <div className="endTurnButton" onClick={endAction}>End Action</div>
             }
             {
-                playedActions > 0 && (currentGameAction === GAME_ACTIONS.selectAction || isEventAction(currentGameAction)) &&
+                playedActions > 0
+                && currentGameAction === GAME_ACTIONS.selectAction &&
                 <div className="endTurnButton" onClick={endTurn}>End Turn</div>
+            }
+            {
+                playedActions > 0
+                && isEventAction(currentGameAction) &&
+                <div className="endTurnButton" onClick={endEvent}>End Event</div>
             }
         </div>
     )
