@@ -19,7 +19,7 @@ export const GAME_ACTIONS = {
 
     selectBorderToPutRiver: 'selectBorderToPutRiver',
     selectWhichRegionWillPreserveItsNumber: 'selectWhichRegionWillPreserveItsNumber',
-    selectRegionToSwitchNumbers: 'selectRegionToSwitchNumbers'
+    selectRegionToSwapNumbers: 'selectRegionToSwapNumbers'
 }
 
 const getGameActionForActionId = actionId => {
@@ -62,7 +62,7 @@ export const getMessageForGameAction = gameAction => {
             return 'create new border consisting up to 6 river borders';
         case GAME_ACTIONS.selectWhichRegionWillPreserveItsNumber:
             return 'select which region will preserve its number';
-        case GAME_ACTIONS.selectRegionToSwitchNumbers:
+        case GAME_ACTIONS.selectRegionToSwapNumbers:
             return 'select region to switch numbers with newly created region (highest number)';
         default:
             return 'no-action';
@@ -173,7 +173,7 @@ export const isEventAction = currentGameActionId => {
     return [
         GAME_ACTIONS.selectMonumentToControl,
         GAME_ACTIONS.selectBorderToPutRiver,
-        GAME_ACTIONS.selectRegionToSwitchNumbers].includes(currentGameActionId)
+        GAME_ACTIONS.selectRegionToSwapNumbers].includes(currentGameActionId)
 }
 
 const game = createSlice({

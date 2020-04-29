@@ -61,12 +61,6 @@ const finishRiverPlacementEffect = ({ splittedRegionNumber }) => (dispatch, getS
 
     dispatch(gameReducer.actions.setActiveGameAction({ actionId: GAME_ACTIONS.selectWhichRegionWillPreserveItsNumber }))
     dispatch(boardReducer.actions.setRegionsToPreserveItsNumber({ regions: [splittedRegionNumber, maxRegionNumber] }))
-    // dispatch(endEventEffect());
-
-    // Chose which region will preserve number: splittedRegionNumber 
-    // Select region to swap region number with ne region number: maxRegionNumber
-    // TODO: Now player should be able to switch highest region number with other region number
-
 }
 
 const splitRegionsEffect = () => (dispatch, getState) => {
