@@ -10,12 +10,13 @@ export const BORDER = {
 const getInitialState = () => {
     return {
         hexes: hexesConfig.map(
-            ({ fields }) => [...fields].map(field => ({ areaType: field[0], region: field[1] }))
+            ({ fields }) => [...fields].map(field => ({ areaType: field[0], region: parseInt(field[1]) }))
         ),
         borders: bordersConfig,
         isBordersPreviewActive: false,
         prospectRivers: [],
         maxRegionNumber: 3,
+        areConflictOrderTokensShown: true,
     }
 }
 
@@ -101,6 +102,9 @@ const board = createSlice({
         changeHexRegion: (state, { payload }) => {
             const { x, y, regionNumber } = payload;
             state.hexes[x][y].region = regionNumber;
+        },
+        toggleAreConflictOrderTokensShown: (state) => {
+            state.areConflictOrderTokensShown = !state.areConflictOrderTokensShown;
         }
     },
 })

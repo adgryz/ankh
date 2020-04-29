@@ -44,7 +44,7 @@ const finishRiverPlacementEffect = ({ splittedRegionNumber }) => (dispatch, getS
 
     if (newRegionHexesCount < 6 || splittedRegionHexesCount < 6) {
         alert('Both regions have to have at least 6 hexes')
-        // Reverse splitting
+        // Undo regions splitting
         hexes.forEach((col, x) => col.forEach((hex, y) => {
             if (hex.region === maxRegionNumber) {
                 dispatch(boardReducer.actions.changeHexRegion({ x, y, regionNumber: splittedRegionNumber }));
@@ -58,6 +58,9 @@ const finishRiverPlacementEffect = ({ splittedRegionNumber }) => (dispatch, getS
 
     dispatch(boardReducer.actions.applyProspectRivers());
     dispatch(endEventEffect());
+
+    // Chose which region will preserve number: splittedRegionNumber 
+    // Select region to swap region number with ne region number: maxRegionNumber
     // TODO: Now player should be able to switch highest region number with other region number
 
 }
@@ -75,8 +78,6 @@ const splitRegionsEffect = () => (dispatch, getState) => {
         regionNumber: maxRegionNumber,
         splittedRegionNumber: hexes[x][y].region
     }))
-
-    // TODO: There should be choice which region will be new max hex1/hex2
 }
 
 let numberOfActiveRecursiveFunctions = 0;
