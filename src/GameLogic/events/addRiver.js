@@ -1,4 +1,5 @@
 import boardReducer, { BORDER } from 'GameLogic/board'
+import gameReducer, { GAME_ACTIONS } from 'GameLogic/game'
 import { getConnectedBorders, areConnectedBorders, getBorderAdjacentHexes, hexesHaveCommonActiveBorder } from 'GameLogic/utils/borderUtils';
 import { getAdjacentList } from 'GameLogic/utils/hexUtils';
 import { endEventEffect } from './events';
@@ -57,7 +58,10 @@ const finishRiverPlacementEffect = ({ splittedRegionNumber }) => (dispatch, getS
     }
 
     dispatch(boardReducer.actions.applyProspectRivers());
-    dispatch(endEventEffect());
+
+    dispatch(gameReducer.actions.setActiveGameAction({ actionId: GAME_ACTIONS.selectWhichRegionWillPreserveItsNumber }))
+    dispatch(boardReducer.actions.setRegionsToPreserveItsNumber({ regions: [splittedRegionNumber, maxRegionNumber] }))
+    // dispatch(endEventEffect());
 
     // Chose which region will preserve number: splittedRegionNumber 
     // Select region to swap region number with ne region number: maxRegionNumber

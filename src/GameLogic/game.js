@@ -18,6 +18,8 @@ export const GAME_ACTIONS = {
     controlMonument: 'controlMonument',
 
     selectBorderToPutRiver: 'selectBorderToPutRiver',
+    selectWhichRegionWillPreserveItsNumber: 'selectWhichRegionWillPreserveItsNumber',
+    selectRegionToSwitchNumbers: 'selectRegionToSwitchNumbers'
 }
 
 const getGameActionForActionId = actionId => {
@@ -120,8 +122,8 @@ const getInitialState = () => {
             },
             [ACTIONS_IDS.FOLLOWERS]: {
                 id: ACTIONS_IDS.FOLLOWERS,
-                startingIndex: 3,
-                index: 3,
+                startingIndex: 5,
+                index: 5,
                 maxIndex: 6,
                 order: 3,
             },
@@ -161,11 +163,17 @@ export const initializePlayerFiguresAndMonumentsEffect = () => (dispatch, getSta
 const getPlayerObjectIds = (object, playerId) => Object.values(object).filter(x => x.playerId === playerId).map(({ id }) => id);
 
 export const isDuringAction = currentGameActionId => {
-    return [GAME_ACTIONS.moveFigure, GAME_ACTIONS.selectFigureToSummon].includes(currentGameActionId)
+    return [
+        GAME_ACTIONS.moveFigure,
+        GAME_ACTIONS.selectFigureToSummon,
+        GAME_ACTIONS.selectWhichRegionWillPreserveItsNumber].includes(currentGameActionId)
 }
 
 export const isEventAction = currentGameActionId => {
-    return [GAME_ACTIONS.selectMonumentToControl, GAME_ACTIONS.selectBorderToPutRiver].includes(currentGameActionId)
+    return [
+        GAME_ACTIONS.selectMonumentToControl,
+        GAME_ACTIONS.selectBorderToPutRiver,
+        GAME_ACTIONS.selectRegionToSwitchNumbers].includes(currentGameActionId)
 }
 
 const game = createSlice({

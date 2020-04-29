@@ -17,6 +17,7 @@ const getInitialState = () => {
         prospectRivers: [],
         maxRegionNumber: 3,
         areConflictOrderTokensShown: true,
+        regionsToPreserveItsNumber: [],
     }
 }
 
@@ -105,6 +106,12 @@ const board = createSlice({
         },
         toggleAreConflictOrderTokensShown: (state) => {
             state.areConflictOrderTokensShown = !state.areConflictOrderTokensShown;
+        },
+        setRegionsToPreserveItsNumber: (state, { payload }) => {
+            state.regionsToPreserveItsNumber = payload.regions;
+        },
+        clearRegionsToPreserveItsNumber: (state) => {
+            state.regionsToPreserveItsNumber = [];
         }
     },
 })

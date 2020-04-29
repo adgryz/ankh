@@ -59,8 +59,8 @@ const Hex = ({ hexData, columnNumber, hexNumber }) => {
     if (areaType === 'X') {
         backgroundColor = 'transparent';
     } else {
-        // backgroundColor = '#' + 3 * hexData.region + 3 * hexData.region + 3 * hexData.region;
-        backgroundColor = getColor(areaType);
+        backgroundColor = '#' + 3 * hexData.region + 3 * hexData.region + 3 * hexData.region;
+        // backgroundColor = getColor(areaType);
     }
 
     let overlayColor;

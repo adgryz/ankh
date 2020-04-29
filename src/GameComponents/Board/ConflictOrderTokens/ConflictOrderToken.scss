@@ -9,4 +9,11 @@
     align-items: center;
     border-radius: 5px;
     font-size: 14px;
+    pointer-events: none;
+}
+
+.canBeSwapped {
+    color: red;
+    cursor: pointer;
+    pointer-events: auto;
 }
