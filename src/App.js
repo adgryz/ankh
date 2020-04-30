@@ -5,6 +5,7 @@ import Board from './GameComponents/Board/Board';
 import EventBoard from './GameComponents/EventBoard/EventBoard';
 import ActionBoard from './GameComponents/ActionBoard/ActionBoard';
 import DevotionBoard from './GameComponents/DevotionBoard/DevotionBoard';
+import ConflictsBoard from './GameComponents/ConflictsBoard/ConflictsBoard';
 import GodBoards from './GameComponents/GodBoards/GodBoards';
 import InfoBox from './GameComponents/UI/InfoBox';
 
@@ -25,6 +26,7 @@ function App() {
     color: god.color,
     devotion
   }))
+  const isConflictActive = useSelector(({ conflict }) => conflict.isConflictActive);
 
   useEffect(() => {
     dispatch(initializeFiguresAndMonumentsOnBoardEffect());
@@ -36,10 +38,14 @@ function App() {
       <div>
         <div style={{ display: 'flex' }}>
           <Board hexes={hexes} borders={borders} />
-          <div>
-            <ActionBoard actions={actions} />
-            <EventBoard event={eventIndex} />
-          </div>
+          {
+            isConflictActive
+              ? <div><ConflictsBoard /></div>
+              : (<div>
+                <ActionBoard actions={actions} />
+                <EventBoard event={eventIndex} />
+              </div>)
+          }
           <DevotionBoard devotion={devotion} />
         </div>
         <GuardianCards />
@@ -48,7 +54,7 @@ function App() {
       <div>
         <GodBoards players={Object.values(players)} />
       </div>
-      <InfoBox />
+      {!isConflictActive && <InfoBox />}
     </div>
   );
 }

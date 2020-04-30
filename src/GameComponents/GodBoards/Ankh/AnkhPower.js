@@ -1,9 +1,10 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { unlockAnkhPowerEffect } from 'GameLogic/actions/unlockAnkhPower';
+
 import './AnkhPower.scss';
 import AnkhToken from './AnkhToken'
-import { unlockAnkhPowerEffect } from 'GameLogic/actions/unlockAnkhPower';
 
 const AnkhPower = ({ power, powerLevel, color, isUnlocked, isUnlocking }) => {
     const dispatch = useDispatch();

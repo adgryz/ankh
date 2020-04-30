@@ -19,7 +19,9 @@ export const GAME_ACTIONS = {
 
     selectBorderToPutRiver: 'selectBorderToPutRiver',
     selectWhichRegionWillPreserveItsNumber: 'selectWhichRegionWillPreserveItsNumber',
-    selectRegionToSwapNumbers: 'selectRegionToSwapNumbers'
+    selectRegionToSwapNumbers: 'selectRegionToSwapNumbers',
+
+    battle: 'battle',
 }
 
 const getGameActionForActionId = actionId => {
@@ -273,16 +275,16 @@ const game = createSlice({
             const playerMonuments = state.players[playerId].monuments;
 
             if (monumentId.startsWith('o')) {
-                const id = playerMonuments.obelisksIds.findIndex(id => id === monumentId);
-                playerMonuments.obelisksIds.splice(monumentId, 1);
+                const ind = playerMonuments.obelisksIds.findIndex(id => id === monumentId);
+                playerMonuments.obelisksIds.splice(ind, 1);
             }
             if (monumentId.startsWith('p')) {
-                const id = playerMonuments.pyramidsIds.findIndex(id => id === monumentId);
-                playerMonuments.pyramidsIds.splice(monumentId, 1);
+                const ind = playerMonuments.pyramidsIds.findIndex(id => id === monumentId);
+                playerMonuments.pyramidsIds.splice(ind, 1);
             }
             if (monumentId.startsWith('t')) {
-                const id = playerMonuments.templesIds.findIndex(id => id === monumentId);
-                playerMonuments.templesIds.splice(monumentId, 1);
+                const ind = playerMonuments.templesIds.findIndex(id => id === monumentId);
+                playerMonuments.templesIds.splice(ind, 1);
             }
         }
     },

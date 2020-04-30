@@ -1,0 +1,16 @@
+.tieBreakerToken {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: brown;
+    border: 3px solid red;
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+
+    .isUsed {
+        filter: grayscale(1);
+    }
+}

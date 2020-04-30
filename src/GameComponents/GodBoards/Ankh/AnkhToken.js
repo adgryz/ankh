@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ankhSymbol from './ankhSymbol.svg';
+import ankhSymbol from './assets/ankhSymbol.svg';
 import './AnkhToken.scss';
 
 const AnkhToken = ({ color }) => {

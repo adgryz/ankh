@@ -36,32 +36,16 @@
             max-width: 100%;
             max-height: 100%;
         }
-
-        .followers {
-            position: absolute;
-            width: 100%;
-            height: 25px;
-            bottom: 0;
-            background: brown;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            .count {
-                font-size: 12px;
-                font-weight: bold;
-                margin: 5px;
-                color: rgb(238, 224, 206);
-            }
-
-            .icon{
-                filter: invert(1);
-            }
-        }
     }
 
     .powers {
         width: 75%;
         display: flex;
     }
+}
+
+.componentsPool {
+    display: flex;
+    margin: 10px;
+    align-items: center;
 }

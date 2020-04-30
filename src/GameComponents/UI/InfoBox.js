@@ -20,6 +20,10 @@ const InfoBox = () => {
     const endAction = () => dispatch(endActionEffect());
     const endEvent = () => dispatch(endEventEffect());
 
+    if (currentGameAction === GAME_ACTIONS.battle) {
+        return null;
+    }
+
     return (
         <div className="infoBox">
             <div>{`${currentPlayer.name}: ${information}`}</div>

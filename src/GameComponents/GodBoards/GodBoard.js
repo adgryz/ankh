@@ -1,17 +1,23 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import AnkhPowerColumn from './AnkhPowerColumn';
-import FiguresPool from './FiguresPool';
-import followersIcon from './follower.svg';
+import { GAME_ACTIONS } from 'GameLogic/game'
+
+import { levelOnePowers, levelTwoPowers, levelThreePowers } from './Ankh/ankhPowersConfig';
+
+import AnkhPowerColumn from './Ankh/AnkhPowerColumn';
+import FiguresPool from './FiguresPool/FiguresPool';
+import TieBreakerToken from './Components/TieBreakerToken';
+import FollowersCount from './Components/FollowersCount';
 import './GodBoard.scss';
 
-import { GAME_ACTIONS } from 'GameLogic/game'
-import { levelOnePowers, levelTwoPowers, levelThreePowers } from './ankhPowersConfig';
+const GodBoard = ({
+    godName, godTitle, godImg, color, GodAbilityComponent,
+    unlockedPowers, followers, playerId, figuresPool }) => {
 
-const GodBoard = ({ godName, godTitle, godImg, color, GodAbilityComponent, unlockedPowers, followers, playerId, figuresPool }) => {
     const unlockedCount = unlockedPowers.length;
     const isUnlocking = useSelector(({ game }) => game.currentGameAction === GAME_ACTIONS.unlockAnkhPower && game.currentPlayerId === playerId);
+    const hasTieBreaker = useSelector(({ conflict }) => conflict.tieBreakerOwnerId === playerId);
 
     return (
         <>
@@ -23,10 +29,6 @@ const GodBoard = ({ godName, godTitle, godImg, color, GodAbilityComponent, unloc
                     </div>
                     <img className="image" src={godImg} alt="portrait" />
                     {GodAbilityComponent && <GodAbilityComponent />}
-                    <div className="followers">
-                        <div className="count">{followers}</div>
-                        <img className="icon" alt="followers" src={followersIcon} width={15} height={15} />
-                    </div>
                 </div>
                 <div className="powers">
                     <AnkhPowerColumn
@@ -58,7 +60,11 @@ const GodBoard = ({ godName, godTitle, godImg, color, GodAbilityComponent, unloc
                         color={color} />
                 </div>
             </div>
-            <FiguresPool figuresPool={figuresPool} playerId={playerId} />
+            <div className="componentsPool">
+                <FollowersCount followers={followers} />
+                {hasTieBreaker && <TieBreakerToken />}
+                <FiguresPool figuresPool={figuresPool} playerId={playerId} />
+            </div>
         </>
     )
 

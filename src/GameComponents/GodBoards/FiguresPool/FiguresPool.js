@@ -2,11 +2,11 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classnames from 'classnames';
 
-import Figure from '../Board/Figure'
-import './FiguresPool.scss'
-
 import { GAME_ACTIONS } from 'GameLogic/game'
 import { selectFigureToSummonEffect } from 'GameLogic/actions/summonFigure'
+
+import Figure from 'GameComponents/Board/Figure'
+import './FiguresPool.scss'
 
 const FiguresPool = ({ figuresPool, playerId }) => {
     const dispatch = useDispatch();

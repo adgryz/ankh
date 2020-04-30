@@ -3,7 +3,7 @@ import React from 'react';
 import AnkhPower from './AnkhPower';
 import AnkhToken from './AnkhToken';
 import './AnkhPowerColumn.scss';
-import scarabSymbol from './scarabSymbol.svg';
+import scarabSymbol from './assets/scarabSymbol.svg';
 
 const AnkhPowerColumn = ({ columnNumber, guardianIndex, powers, unlockedPowers, firstActive, secondActive, color, isUnlocking }) => {
 

@@ -1,0 +1,26 @@
+.followersWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+
+    .count {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 5px;
+    }
+
+    .followerToken {
+        background: darkgreen;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+    }
+
+    .icon{
+        filter: invert(1);
+    }
+}
