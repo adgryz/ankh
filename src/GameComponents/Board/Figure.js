@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import './Figure.scss';
 
+
 const Figure = ({ figureId }) => {
     const players = useSelector(({ game }) => game.players)
     const isGod = figureId.startsWith('g');

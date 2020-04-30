@@ -6,6 +6,7 @@ const getInitialState = () => {
         isTieBreakerUsed: false,
         isConflictActive: false,
         activeConflictNumber: 1,
+        conflicts: []
     }
 }
 
@@ -19,7 +20,7 @@ const conflict = createSlice({
         setConflictActive: (state) => {
             state.isConflictActive = true;
         },
-        clearAfterConflict: (state) => {
+        clearAfterConflicts: (state) => {
             state.tieBreakerOwnerId = undefined;
             state.isTieBreakerUsed = false;
             state.isConflictActive = false;
@@ -27,6 +28,12 @@ const conflict = createSlice({
         },
         markTieBreakerUsed: (state) => {
             state.isTieBreakerUsed = true;
+        },
+        setConflicts: (state, { payload }) => {
+            state.conflicts = payload.conflicts;
+        },
+        goToNextConflict: (state) => {
+            state.activeConflictNumber++;
         }
     },
 })

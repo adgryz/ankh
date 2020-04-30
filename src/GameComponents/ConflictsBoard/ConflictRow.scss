@@ -1,0 +1,28 @@
+.conflictRow{
+    display: flex;
+    align-items: center;
+    border: 1px solid brown;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    padding: 5px;
+
+    .regionNumber {
+        width: 20px;
+        height: 20px;
+        background-color: brown;
+        font-weight: bold;
+        color: yellow;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+        font-size: 14px;
+        margin-right: 5px;
+    }
+
+    .conflictType {
+        font-weight: bold;
+        color: brown;
+        margin-right: 5px;
+    }
+}

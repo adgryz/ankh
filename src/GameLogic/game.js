@@ -239,6 +239,17 @@ const game = createSlice({
             const player = state.players[state.currentPlayerId];
             player.followers += payload.count;
         },
+        // DEVOTION
+        decreasePlayerDevotion: (state, { payload }) => {
+            const { playerId, count } = payload;
+            const player = state.players[playerId];
+            player.devotion -= count;
+        },
+        increasePlayerDevotion: (state, { payload }) => {
+            const { playerId, count } = payload;
+            const player = state.players[playerId];
+            player.devotion += count;
+        },
         // POOL
         setSelectedFigureFromPool: (state, { payload }) => {
             state.selectedFigureFromPool = payload.figureId;
@@ -286,7 +297,7 @@ const game = createSlice({
                 const ind = playerMonuments.templesIds.findIndex(id => id === monumentId);
                 playerMonuments.templesIds.splice(ind, 1);
             }
-        }
+        },
     },
 })
 

@@ -1,8 +1,10 @@
-import { EVENTS_IDS } from './const';
-import { eventBoardConfig } from 'GameComponents/EventBoard/eventBoardConfig';
 import gameReducer, { GAME_ACTIONS } from 'GameLogic/game';
 import boardReducer from 'GameLogic/board';
 import conflictReducer from 'GameLogic/conflict';
+
+import { EVENTS_IDS } from './const';
+import { eventBoardConfig } from 'GameComponents/EventBoard/eventBoardConfig';
+import { resolveConflictsEffect } from 'GameLogic/conflicts/resolveConflicts';
 
 export const resolveCurrentEventEffect = () => (dispatch, getState) => {
     const { game } = getState();
@@ -19,6 +21,7 @@ export const resolveCurrentEventEffect = () => (dispatch, getState) => {
         dispatch(gameReducer.actions.setActiveGameAction({ actionId: GAME_ACTIONS.selectMonumentToControl }));
         dispatch(conflictReducer.actions.giveTieBreakerToPlayer({ playerId: game.currentPlayerId }))
         dispatch(conflictReducer.actions.setConflictActive())
+        dispatch(resolveConflictsEffect());
     }
 }
 
