@@ -9,18 +9,20 @@ import AnkhPowerColumn from './Ankh/AnkhPowerColumn';
 import FiguresPool from './FiguresPool/FiguresPool';
 import TieBreakerToken from './Components/TieBreakerToken';
 import FollowersCount from './Components/FollowersCount';
+import BattleCards from './BattleCards/BattleCards';
 import './GodBoard.scss';
 
 const GodBoard = ({
     godName, godTitle, godImg, color, GodAbilityComponent,
-    unlockedPowers, followers, playerId, figuresPool }) => {
+    unlockedPowers, followers, playerId, figuresPool, battleCards }) => {
 
     const unlockedCount = unlockedPowers.length;
     const isUnlocking = useSelector(({ game }) => game.currentGameAction === GAME_ACTIONS.unlockAnkhPower && game.currentPlayerId === playerId);
     const hasTieBreaker = useSelector(({ conflict }) => conflict.tieBreakerOwnerId === playerId);
 
     return (
-        <>
+        <div style={{ display: 'flex' }}>
+            <BattleCards playerCards={battleCards} />
             <div style={{ borderColor: color }} className="godBoard">
                 <div className="portrait">
                     <div className="description">
@@ -65,7 +67,7 @@ const GodBoard = ({
                 {hasTieBreaker && <TieBreakerToken />}
                 <FiguresPool figuresPool={figuresPool} playerId={playerId} />
             </div>
-        </>
+        </div>
     )
 
 }

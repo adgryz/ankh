@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 
 import { CONFLICT_TYPE } from 'GameLogic/conflicts/getConflicts'
 
@@ -10,7 +11,7 @@ const ConflictRow = ({ conflict, isActive }) => {
     const getPlayerGod = playerId => playerId.replace('p', 'g');
 
     return (
-        <div className="conflictRow">
+        <div className={classnames("conflictRow", { isActive })}>
             <div className="regionNumber">{regionNumber}</div>
             <div className="conflictType">{conflictType}</div>
             {

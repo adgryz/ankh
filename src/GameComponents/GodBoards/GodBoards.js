@@ -6,7 +6,7 @@ const GodBoards = ({ players }) => {
     return (
         <>
             {
-                players.map(({ god, followers, id, figuresPool }) =>
+                players.map(({ god, followers, id, figuresPool, battleCards }) =>
                     <GodBoard
                         key={god.name}
                         unlockedPowers={god.unlockedPowers}
@@ -15,6 +15,7 @@ const GodBoards = ({ players }) => {
                         godImg={god.imgSrc}
                         godTitle={god.title}
                         playerId={id}
+                        battleCards={battleCards}
                         figuresPool={figuresPool}
                         color={god.color} />
                 )

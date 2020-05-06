@@ -1,46 +1,143 @@
-import conflictReducer from 'GameLogic/conflict'
+import conflictReducer, { BATTLE_ACTION } from 'GameLogic/conflict'
 import gameReducer from 'GameLogic/game'
 
 import { getConflicts, CONFLICT_TYPE } from './getConflicts'
 import { endEventEffect } from 'GameLogic/events/events';
+import { BATTLE_CARD } from './const';
 
-export const resolveConflictsEffect = () => async (dispatch, getState) => {
+export const resolveConflictsEffect = () => (dispatch, getState) => {
     const { board } = getState();
     dispatch(conflictReducer.actions.setConflicts({ conflicts: getConflicts(board) }))
     const { conflict: { conflicts } } = getState();
-
-    await sleep(1000);
-    conflicts.forEach(conflict => dispatch(resolveConflictEffect({ conflict })));
+    dispatch(resolveConflictEffect({ conflict: conflicts[0] }))
 }
 
 export const resolveConflictEffect = ({ conflict }) => (dispatch, getState) => {
-    const { conflictType, regionNumber, playerId, monumentsInRegion } = conflict;
-
+    const { conflictType, regionNumber, playerId, monumentsInRegion, playersIds } = conflict;
     if (conflictType === CONFLICT_TYPE.NO_BATTLE) {
-        alert(`No battle in region ${regionNumber}`);
+        dispatch(conflictReducer.actions.setMessage({ message: `No battle in region ${regionNumber}` }));
         dispatch(finishCurrentConflictEffect({ conflict }))
         return;
     }
 
     if (conflictType === CONFLICT_TYPE.DOMINATION) {
-        alert(`Domination in region ${regionNumber}`);
-
+        dispatch(conflictReducer.actions.setMessage({ message: `Domination in region ${regionNumber}` }));
         const devotionAmount = 1 + calculatePlayerDevotionFromRegion(playerId, monumentsInRegion);
         dispatch(gameReducer.actions.increasePlayerDevotion({ playerId, count: devotionAmount }))
         console.log(conflict);
-        alert(`${playerId} gets ${devotionAmount} devotion`);
+        // alert(`${playerId} gets ${devotionAmount} devotion`);
         dispatch(finishCurrentConflictEffect({ conflict }))
         return;
     }
 
 
     if (conflictType === CONFLICT_TYPE.BATTLE) {
-        alert(`Battle in region ${regionNumber}`);
-        dispatch(finishCurrentConflictEffect({ conflict }))
+        dispatch(conflictReducer.actions.setMessage({ message: `Battle in region ${regionNumber}` }));
+        dispatch(conflictReducer.actions.setCurrentPlayerId({ playerId: playersIds[0] }));
+        sleep(1000).then(() => dispatch(selectBattleCardEffect()))
+
+        // 1 card selection
+        // 2 resolve plague
+        // 3 resolve other cards
+        // 4 monuments majority
+        // 5 battle resolution
         return;
     }
 
 }
+
+const selectBattleCardEffect = () => (dispatch, getState) => {
+    const { conflict } = getState();
+    const { currentPlayerId } = conflict;
+    dispatch(conflictReducer.actions.setMessage({ message: `${currentPlayerId} choose battle card` }));
+    dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.SELECT_CARD }));
+}
+
+export const playBattleCardEffect = ({ card }) => (dispatch, getState) => {
+    const { conflict } = getState();
+    const { conflicts, activeConflictNumber, currentPlayerId } = conflict;
+
+    dispatch(conflictReducer.actions.setPlayedCard({ playerId: currentPlayerId, card }));
+
+
+    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);
+    const players = currentConflict.playersIds;
+    const currentPlayerIndex = players.findIndex(p => p === currentPlayerId);
+    const nextPlayerId = currentPlayerIndex === players.length - 1 ? null : players[currentPlayerIndex + 1];
+
+    if (nextPlayerId) {
+        dispatch(conflictReducer.actions.setCurrentPlayerId({ playerId: nextPlayerId }));
+        dispatch(selectBattleCardEffect())
+    } else {
+        // Last player played battle card => resolve battle cards
+        dispatch(conflictReducer.actions.setMessage({ message: `Played cards` }));
+        dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.RESOLVE_CARDS }));
+        dispatch(resolveCardsEffect());
+    }
+}
+
+
+const resolveCardsEffect = () => (dispatch, getState) => {
+    const { conflict } = getState();
+    const { playedCards } = conflict;
+    const plaguePlayersIds = Object.entries(playedCards)
+        .filter(([playerId, card]) => card === BATTLE_CARD.plague)
+        .map(([playerId, card]) => playerId)
+    const plaguePlayed = plaguePlayersIds.length > 0;
+
+    if (plaguePlayed) {
+        dispatch(resolvePlagueEffect({ playersIds: plaguePlayersIds }));
+    } else {
+        dispatch(resolveOtherCardsEffect())
+    }
+}
+
+const resolvePlagueEffect = ({ playersIds }) => (dispatch, getState) => {
+    const { conflict, game } = getState();
+    dispatch(conflictReducer.actions.setMessage({ message: `Resolve plague` }));
+    console.log('PLAGUE HAPPENS');
+    playersIds.forEach(playerId => dispatch(conflictReducer.actions.removePlayerCard({ playerId })));
+    dispatch(resolveOtherCardsEffect())
+}
+
+const resolveOtherCardsEffect = () => (dispatch, getState) => {
+    const { conflict } = getState();
+    const { playedCards } = conflict;
+    // TO DO resolve cards starting from player with lowest devotion in ascending order (build monument)
+    const cardsList = Object.entries(playedCards);
+
+    if (cardsList.length === 0) {
+        dispatch(monumentMajorityEffect());
+    } else {
+        const [playerId, card] = cardsList[0];
+        dispatch(resolveCardEffect({ playerId, card }))
+    }
+}
+
+const resolveCardEffect = ({ playerId, card }) => (dispatch, getState) => {
+    dispatch(conflictReducer.actions.setMessage({ message: `Resolve ${card}` }));
+
+    console.log(card, 'happens');
+
+    dispatch(conflictReducer.actions.removePlayerCard({ playerId }))
+
+    const { conflict } = getState();
+    const { playedCards } = conflict;
+
+    const cardsList = Object.entries(playedCards);
+
+    if (cardsList.length === 0) {
+        dispatch(monumentMajorityEffect());
+    } else {
+        const [nextPlayerId, nextCard] = cardsList[0];
+        dispatch(resolveCardEffect({ playerId: nextPlayerId, card: nextCard }))
+    }
+}
+
+const monumentMajorityEffect = () => (dispatch, getState) => {
+    dispatch(conflictReducer.actions.setMessage({ message: `Monuments majority` }));
+}
+
 
 const calculatePlayerDevotionFromRegion = (playerId, monumentsInRegion) => {
     const obelisksInRegion = monumentsInRegion.filter(({ monumentId }) => monumentId[0] === 'o')
@@ -69,7 +166,7 @@ const calculatePlayerDevotionForMonumentType = (playerId, monuments) => {
     return playerId === topPlayer ? highestPlayerMonumentsCount : 0;
 }
 
-export const finishCurrentConflictEffect = ({ conflict }) => (dispatch, getState) => {
+export const finishCurrentConflictEffect = ({ conflict }) => async (dispatch, getState) => {
     const { board } = getState();
 
     if (conflict.regionNumber === board.maxRegionNumber) {

@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { amun, ra } from './godsSettings/godsSettings';
-import { ACTIONS_IDS } from './actions/const'
+import { amun, ra } from 'GameLogic/godsSettings/godsSettings';
+import { ACTIONS_IDS } from 'GameLogic/actions/const'
+import { BATTLE_CARD } from 'GameLogic/conflicts/const'
 
 export const GAME_ACTIONS = {
     selectAction: 'selectAction',
@@ -84,6 +85,7 @@ const initialPlayerState = {
     },
     followers: 1,
     devotion: 0,
+    battleCards: Object.values(BATTLE_CARD)
 }
 const getInitialState = () => {
     return {
@@ -298,6 +300,13 @@ const game = createSlice({
                 playerMonuments.templesIds.splice(ind, 1);
             }
         },
+        // BATTLE CARD
+        playBattleCard: (state, { payload }) => {
+            const { playerId, card } = payload;
+            let playerCards = state.players[playerId].battleCards;
+            const cardIndex = playerCards.findIndex(c => c === card);
+            playerCards.splice(cardIndex, 1);
+        }
     },
 })
 

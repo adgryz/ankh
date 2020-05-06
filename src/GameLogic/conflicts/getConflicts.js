@@ -35,7 +35,7 @@ const getRegionConflict = (board, regionNumber) => {
     return {
         regionNumber,
         conflictType: CONFLICT_TYPE.BATTLE,
-        playersIds: playersToTakePartInBattle,
+        playersIds: playersToTakePartInBattle.sort(),
         figuresInRegion,
         monumentsInRegion,
     }

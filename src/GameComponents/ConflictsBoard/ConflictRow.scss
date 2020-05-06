@@ -20,6 +20,14 @@
         margin-right: 5px;
     }
 
+    &.isActive{
+        border-color: red;
+        .regionNumber {
+            color: red;
+        }
+    }
+
+
     .conflictType {
         font-weight: bold;
         color: brown;

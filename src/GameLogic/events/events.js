@@ -18,7 +18,7 @@ export const resolveCurrentEventEffect = () => (dispatch, getState) => {
         dispatch(boardReducer.actions.toggleBordersPreview({ isActive: true }))
     }
     if (eventId === EVENTS_IDS.BATTLE) {
-        dispatch(gameReducer.actions.setActiveGameAction({ actionId: GAME_ACTIONS.selectMonumentToControl }));
+        dispatch(gameReducer.actions.setActiveGameAction({ actionId: GAME_ACTIONS.battle }));
         dispatch(conflictReducer.actions.giveTieBreakerToPlayer({ playerId: game.currentPlayerId }))
         dispatch(conflictReducer.actions.setConflictActive())
         dispatch(resolveConflictsEffect());
