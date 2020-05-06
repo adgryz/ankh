@@ -2,7 +2,13 @@ import { createSlice } from '@reduxjs/toolkit'
 
 export const BATTLE_ACTION = {
     SELECT_CARD: 'SELECT_CARD',
-    RESOLVE_CARDS: 'RESOLVE_CARDS'
+    RESOLVE_CARDS: 'RESOLVE_CARDS',
+
+    PLAGUE_BID: 'PLAGUE_BID',
+    RESOLVE_PLAGUE: 'RESOLVE_PLAGUE',
+
+    SELECT_MONUMENT: 'SELECT_MONUMENT',
+    BUILD_MONUMENT: 'BUILD_MONUMENT',
 }
 
 const getInitialState = () => {

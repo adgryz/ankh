@@ -227,6 +227,9 @@ const game = createSlice({
         setFigureMoved: (state, { payload }) => {
             state.movedFiguresIds.push(payload.figureId);
         },
+        clearMovedFigures: (state, { payload }) => {
+            state.movedFiguresIds = [];
+        },
         // ANKH POWERS
         unlockAnkhPower: (state, { payload }) => {
             const player = state.players[state.currentPlayerId];
@@ -306,6 +309,10 @@ const game = createSlice({
             let playerCards = state.players[playerId].battleCards;
             const cardIndex = playerCards.findIndex(c => c === card);
             playerCards.splice(cardIndex, 1);
+        },
+        recoverPlayerBattleCards: (state, { payload }) => {
+            const { playerId } = payload;
+            state.players[playerId].battleCards = Object.values(BATTLE_CARD)
         }
     },
 })

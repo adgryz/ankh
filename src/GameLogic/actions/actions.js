@@ -39,6 +39,12 @@ export const endActionEffect = () => (dispatch, getState) => {
     dispatch(gameReducer.actions.setActiveGameAction({ actionId: GAME_ACTIONS.selectAction }))
     const { game: nextGame } = getState();
 
+    // Clear after movements
+    if (actionId === ACTIONS_IDS.MOVE) {
+        dispatch(gameReducer.actions.clearMovedFigures());
+        return;
+    }
+
     // Action reached max index
     if (nextGame.actions[actionId].index === nextGame.actions[actionId].maxIndex) {
         dispatch(gameReducer.actions.moveEventIndex());
@@ -57,4 +63,6 @@ export const endActionEffect = () => (dispatch, getState) => {
         dispatch(gameReducer.actions.endTurn());
         return;
     }
+
+
 };

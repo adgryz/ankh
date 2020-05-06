@@ -36,6 +36,16 @@ const ConflictsBoard = () => {
             {
                 actionId === BATTLE_ACTION.RESOLVE_CARDS && <PlayedCards playedCards={playedCards} />
             }
+            {
+                actionId === BATTLE_ACTION.PLAGUE_BID && <div>Plague bidder for player x</div>
+            }
+            {
+                actionId === BATTLE_ACTION.RESOLVE_PLAGUE && <div>Bidding results with marked winner</div>
+            }
+            {
+                (actionId === BATTLE_ACTION.SELECT_MONUMENT || actionId === BATTLE_ACTION.BUILD_MONUMENT)
+                && <div>{`[O] [P] [[T]]`}</div>
+            }
         </div>
     )
 }

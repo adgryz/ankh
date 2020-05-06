@@ -23,49 +23,51 @@ const GodBoard = ({
     return (
         <div style={{ display: 'flex' }}>
             <BattleCards playerCards={battleCards} />
-            <div style={{ borderColor: color }} className="godBoard">
-                <div className="portrait">
-                    <div className="description">
-                        <div className="name">{godName}</div>
-                        <div className="title">{godTitle}</div>
+            <div>
+                <div style={{ borderColor: color }} className="godBoard">
+                    <div className="portrait">
+                        <div className="description">
+                            <div className="name">{godName}</div>
+                            <div className="title">{godTitle}</div>
+                        </div>
+                        <img className="image" src={godImg} alt="portrait" />
+                        {GodAbilityComponent && <GodAbilityComponent />}
                     </div>
-                    <img className="image" src={godImg} alt="portrait" />
-                    {GodAbilityComponent && <GodAbilityComponent />}
+                    <div className="powers">
+                        <AnkhPowerColumn
+                            columnNumber={1}
+                            guardianIndex={2}
+                            firstActive={unlockedCount > 0}
+                            secondActive={unlockedCount > 1}
+                            unlockedPowers={unlockedPowers}
+                            isUnlocking={isUnlocking && unlockedCount < 2}
+                            powers={levelOnePowers}
+                            color={color} />
+                        <AnkhPowerColumn
+                            columnNumber={2}
+                            guardianIndex={2}
+                            firstActive={unlockedCount > 2}
+                            secondActive={unlockedCount > 3}
+                            unlockedPowers={unlockedPowers}
+                            isUnlocking={isUnlocking && unlockedCount < 4 && unlockedCount >= 2}
+                            powers={levelTwoPowers}
+                            color={color} />
+                        <AnkhPowerColumn
+                            columnNumber={3}
+                            guardianIndex={1}
+                            firstActive={unlockedCount > 4}
+                            secondActive={unlockedCount > 5}
+                            unlockedPowers={unlockedPowers}
+                            isUnlocking={isUnlocking && unlockedCount < 6 && unlockedCount >= 4}
+                            powers={levelThreePowers}
+                            color={color} />
+                    </div>
                 </div>
-                <div className="powers">
-                    <AnkhPowerColumn
-                        columnNumber={1}
-                        guardianIndex={2}
-                        firstActive={unlockedCount > 0}
-                        secondActive={unlockedCount > 1}
-                        unlockedPowers={unlockedPowers}
-                        isUnlocking={isUnlocking && unlockedCount < 2}
-                        powers={levelOnePowers}
-                        color={color} />
-                    <AnkhPowerColumn
-                        columnNumber={2}
-                        guardianIndex={2}
-                        firstActive={unlockedCount > 2}
-                        secondActive={unlockedCount > 3}
-                        unlockedPowers={unlockedPowers}
-                        isUnlocking={isUnlocking && unlockedCount < 4 && unlockedCount >= 2}
-                        powers={levelTwoPowers}
-                        color={color} />
-                    <AnkhPowerColumn
-                        columnNumber={3}
-                        guardianIndex={1}
-                        firstActive={unlockedCount > 4}
-                        secondActive={unlockedCount > 5}
-                        unlockedPowers={unlockedPowers}
-                        isUnlocking={isUnlocking && unlockedCount < 6 && unlockedCount >= 4}
-                        powers={levelThreePowers}
-                        color={color} />
+                <div className="componentsPool">
+                    <FollowersCount followers={followers} />
+                    {hasTieBreaker && <TieBreakerToken />}
+                    <FiguresPool figuresPool={figuresPool} playerId={playerId} />
                 </div>
-            </div>
-            <div className="componentsPool">
-                <FollowersCount followers={followers} />
-                {hasTieBreaker && <TieBreakerToken />}
-                <FiguresPool figuresPool={figuresPool} playerId={playerId} />
             </div>
         </div>
     )

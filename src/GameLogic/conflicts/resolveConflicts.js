@@ -10,6 +10,7 @@ export const resolveConflictsEffect = () => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setConflicts({ conflicts: getConflicts(board) }))
     const { conflict: { conflicts } } = getState();
     dispatch(resolveConflictEffect({ conflict: conflicts[0] }))
+    // TO DO GO TO NEXT CONFLICTS
 }
 
 export const resolveConflictEffect = ({ conflict }) => (dispatch, getState) => {
@@ -24,8 +25,6 @@ export const resolveConflictEffect = ({ conflict }) => (dispatch, getState) => {
         dispatch(conflictReducer.actions.setMessage({ message: `Domination in region ${regionNumber}` }));
         const devotionAmount = 1 + calculatePlayerDevotionFromRegion(playerId, monumentsInRegion);
         dispatch(gameReducer.actions.increasePlayerDevotion({ playerId, count: devotionAmount }))
-        console.log(conflict);
-        // alert(`${playerId} gets ${devotionAmount} devotion`);
         dispatch(finishCurrentConflictEffect({ conflict }))
         return;
     }
@@ -94,9 +93,11 @@ const resolveCardsEffect = () => (dispatch, getState) => {
 
 const resolvePlagueEffect = ({ playersIds }) => (dispatch, getState) => {
     const { conflict, game } = getState();
+    dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.PLAGUE_BID }));
     dispatch(conflictReducer.actions.setMessage({ message: `Resolve plague` }));
     console.log('PLAGUE HAPPENS');
     playersIds.forEach(playerId => dispatch(conflictReducer.actions.removePlayerCard({ playerId })));
+    playersIds.forEach(playerId => dispatch(gameReducer.actions.playBattleCard({ playerId, card: BATTLE_CARD.plague })));
     dispatch(resolveOtherCardsEffect())
 }
 
@@ -120,12 +121,31 @@ const resolveCardEffect = ({ playerId, card }) => (dispatch, getState) => {
     console.log(card, 'happens');
 
     dispatch(conflictReducer.actions.removePlayerCard({ playerId }))
+    dispatch(gameReducer.actions.playBattleCard({ playerId, card }));
+
+    switch (card) {
+        case BATTLE_CARD.cycle:
+            dispatch(resolveCycleOfMaat({ playerId }))
+            break;
+        case BATTLE_CARD.flood:
+            dispatch(resolveFlood({ playerId }))
+            break;
+        case BATTLE_CARD.drought:
+            dispatch(resolveDrought({ playerId }))
+            break;
+        case BATTLE_CARD.miracle:
+            dispatch(resolveMiracle({ playerId }))
+            break;
+        case BATTLE_CARD.build:
+            dispatch(resolveBuildMonument({ playerId }))
+            break;
+        default:
+            break;
+    }
 
     const { conflict } = getState();
     const { playedCards } = conflict;
-
     const cardsList = Object.entries(playedCards);
-
     if (cardsList.length === 0) {
         dispatch(monumentMajorityEffect());
     } else {
@@ -134,8 +154,31 @@ const resolveCardEffect = ({ playerId, card }) => (dispatch, getState) => {
     }
 }
 
+const resolveCycleOfMaat = ({ playerId, card }) => (dispatch, getState) => {
+    dispatch(conflictReducer.actions.setMessage({ message: `Player ${playerId} uses Cycle of Ma'at` }));
+    dispatch(gameReducer.actions.recoverPlayerBattleCards({ playerId }));
+}
+
+const resolveDrought = ({ playerId, card }) => (dispatch, getState) => {
+    dispatch(conflictReducer.actions.setMessage({ message: `Player ${playerId} uses Drought` }));
+}
+
+const resolveFlood = ({ playerId, card }) => (dispatch, getState) => {
+    dispatch(conflictReducer.actions.setMessage({ message: `Player ${playerId} uses Flood` }));
+}
+
+const resolveMiracle = ({ playerId, card }) => (dispatch, getState) => {
+    dispatch(conflictReducer.actions.setMessage({ message: `Player ${playerId} uses Miracle` }));
+}
+
+const resolveBuildMonument = ({ playerId, card }) => (dispatch, getState) => {
+    dispatch(conflictReducer.actions.setMessage({ message: `Player ${playerId} uses Build Monument` }));
+    dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.SELECT_MONUMENT }));
+}
+
 const monumentMajorityEffect = () => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Monuments majority` }));
+    dispatch(finishConflictsEffect());
 }
 
 
