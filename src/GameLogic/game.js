@@ -244,6 +244,16 @@ const game = createSlice({
             const player = state.players[state.currentPlayerId];
             player.followers += payload.count;
         },
+        decreasePlayerFollowers: (state, { payload }) => {
+            const { playerId, count } = payload;
+            const player = state.players[playerId];
+            player.followers -= count;
+        },
+        increasePlayerFollowers: (state, { payload }) => {
+            const { playerId, count } = payload;
+            const player = state.players[playerId];
+            player.followers += count;
+        },
         // DEVOTION
         decreasePlayerDevotion: (state, { payload }) => {
             const { playerId, count } = payload;

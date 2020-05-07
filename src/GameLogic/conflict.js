@@ -22,7 +22,7 @@ const getInitialState = () => {
         playedCards: {},
         currentPlayerId: undefined,
         currentBattleActionId: undefined,
-        currentConflictId: undefined
+        currentConflictId: undefined,
     }
 }
 
@@ -70,6 +70,11 @@ const conflict = createSlice({
         removePlayerCard: (state, { payload }) => {
             const { playerId } = payload;
             delete state.playedCards[playerId];
+        },
+        changePlayerStrengthInConflict: (state, { payload }) => {
+            const { playerId, newStrength, regionNumber } = payload;
+            const conflict = state.conflicts.find(conflict => conflict.regionNumber === regionNumber);
+            conflict.playersStrengths[playerId] = newStrength;
         }
     },
 })

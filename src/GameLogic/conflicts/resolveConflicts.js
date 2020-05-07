@@ -1,13 +1,13 @@
 import conflictReducer, { BATTLE_ACTION } from 'GameLogic/conflict'
 import gameReducer from 'GameLogic/game'
 
-import { getConflicts, CONFLICT_TYPE } from './getConflicts'
+import { getConflicts, getPlayerFiguresFromConflict, CONFLICT_TYPE } from './getConflicts'
 import { endEventEffect } from 'GameLogic/events/events';
 import { BATTLE_CARD } from './const';
 
 export const resolveConflictsEffect = () => (dispatch, getState) => {
-    const { board } = getState();
-    dispatch(conflictReducer.actions.setConflicts({ conflicts: getConflicts(board) }))
+    const { board, figures } = getState();
+    dispatch(conflictReducer.actions.setConflicts({ conflicts: getConflicts(board, figures) }))
     const { conflict: { conflicts } } = getState();
     dispatch(resolveConflictEffect({ conflict: conflicts[0] }))
     // TO DO GO TO NEXT CONFLICTS
@@ -118,8 +118,6 @@ const resolveOtherCardsEffect = () => (dispatch, getState) => {
 const resolveCardEffect = ({ playerId, card }) => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Resolve ${card}` }));
 
-    console.log(card, 'happens');
-
     dispatch(conflictReducer.actions.removePlayerCard({ playerId }))
     dispatch(gameReducer.actions.playBattleCard({ playerId, card }));
 
@@ -159,12 +157,35 @@ const resolveCycleOfMaat = ({ playerId, card }) => (dispatch, getState) => {
     dispatch(gameReducer.actions.recoverPlayerBattleCards({ playerId }));
 }
 
-const resolveDrought = ({ playerId, card }) => (dispatch, getState) => {
+const resolveDrought = ({ playerId }) => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Player ${playerId} uses Drought` }));
+
+    const { conflict, figures, board: { hexes } } = getState();
+    const { conflicts, activeConflictNumber } = conflict;
+    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);
+    const playerFigures = getPlayerFiguresFromConflict(currentConflict.figuresInRegion, figures, playerId);
+    const playerFiguresOnDesertLands = playerFigures.filter(({ x, y }) => hexes[x][y].areaType === 'D');
+    const otherPlayerFigures = playerFigures.filter(({ x, y }) => hexes[x][y].areaType !== 'D');
+
+    const desertStrength = playerFiguresOnDesertLands.reduce((acc, curr) => acc + curr.strength, 0);
+    const otherStrength = otherPlayerFigures.reduce((acc, curr) => acc + curr.strength, 0);
+    const newStrength = otherStrength + 2 * desertStrength;
+    dispatch(conflictReducer.actions.changePlayerStrengthInConflict({ playerId, newStrength, regionNumber: activeConflictNumber }))
+
+    console.log(`Player ${playerId} strength grows from ${desertStrength + otherStrength} to ${newStrength} from Drought`);
 }
 
-const resolveFlood = ({ playerId, card }) => (dispatch, getState) => {
+const resolveFlood = ({ playerId }) => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Player ${playerId} uses Flood` }));
+
+    const { conflict, figures, board: { hexes } } = getState();
+    const { conflicts, activeConflictNumber } = conflict;
+    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);
+    const playerFigures = getPlayerFiguresFromConflict(currentConflict.figuresInRegion, figures, playerId);
+    const playerFiguresOnFertileLandsCount = playerFigures.filter(({ x, y }) => hexes[x][y].areaType === 'G').length;
+    dispatch(gameReducer.actions.increasePlayerFollowers({ playerId, count: playerFiguresOnFertileLandsCount }))
+
+    console.log(`Player ${playerId} gets ${playerFiguresOnFertileLandsCount} followers from Flood`);
 }
 
 const resolveMiracle = ({ playerId, card }) => (dispatch, getState) => {
@@ -178,14 +199,25 @@ const resolveBuildMonument = ({ playerId, card }) => (dispatch, getState) => {
 
 const monumentMajorityEffect = () => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Monuments majority` }));
+    const { conflict } = getState();
+    const { conflicts, activeConflictNumber } = conflict;
+    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);
+
+    currentConflict.playersIds.forEach(
+        playerId => {
+            const devotion = calculatePlayerDevotionFromRegion(playerId, currentConflict.monumentsInRegion);
+            console.log(`Player ${playerId} gets ${devotion} devotion from Monuments Majority`);
+            dispatch(gameReducer.actions.increasePlayerDevotion({ playerId, count: devotion }))
+        }
+    )
+
     dispatch(finishConflictsEffect());
 }
 
-
 const calculatePlayerDevotionFromRegion = (playerId, monumentsInRegion) => {
-    const obelisksInRegion = monumentsInRegion.filter(({ monumentId }) => monumentId[0] === 'o')
-    const pyramidsInRegion = monumentsInRegion.filter(({ monumentId }) => monumentId[0] === 'p')
-    const templesInRegion = monumentsInRegion.filter(({ monumentId }) => monumentId[0] === 't')
+    const obelisksInRegion = monumentsInRegion.filter(({ monumentId }) => monumentId.startsWith('o'))
+    const pyramidsInRegion = monumentsInRegion.filter(({ monumentId }) => monumentId.startsWith('p'))
+    const templesInRegion = monumentsInRegion.filter(({ monumentId }) => monumentId.startsWith('t'))
     return calculatePlayerDevotionForMonumentType(playerId, obelisksInRegion) +
         calculatePlayerDevotionForMonumentType(playerId, pyramidsInRegion) +
         calculatePlayerDevotionForMonumentType(playerId, templesInRegion);

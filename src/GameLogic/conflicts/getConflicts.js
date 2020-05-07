@@ -1,9 +1,9 @@
-export const getConflicts = (board) => {
+export const getConflicts = (board, figures) => {
     const regionNumbers = new Array(board.maxRegionNumber).fill(0).map((x, ind) => ind + 1);
-    return regionNumbers.map(regionNumber => getRegionConflict(board, regionNumber))
+    return regionNumbers.map(regionNumber => getRegionConflict(board, figures, regionNumber))
 }
 
-const getRegionConflict = (board, regionNumber) => {
+const getRegionConflict = (board, figures, regionNumber) => {
     const { hexes } = board;
 
     const regionHexes = hexes.flat().filter(hex => hex.region === regionNumber)
@@ -32,13 +32,33 @@ const getRegionConflict = (board, regionNumber) => {
         }
     }
 
+    const playersIds = playersToTakePartInBattle.sort();
+
+    const playersStrengths = playersIds
+        .reduce((acc, currId) => {
+            return {
+                [currId]: getPlayerFiguresFromConflict(figuresInRegion, figures, currId)
+                    .reduce((acc, curr) => acc + curr.strength, 0),
+                ...acc,
+            }
+        }, {})
+
     return {
         regionNumber,
         conflictType: CONFLICT_TYPE.BATTLE,
-        playersIds: playersToTakePartInBattle.sort(),
+        playersIds,
         figuresInRegion,
         monumentsInRegion,
+        playersStrengths
     }
+}
+
+export const getPlayerFiguresFromConflict = (figuresInRegion, figures, playerId) => {
+    const playerFiguresIds = figuresInRegion.filter(figure => figure.playerId === playerId).map(figure => figure.figureId);
+    const playerGod = Object.values(figures.gods).filter(god => playerFiguresIds.includes(god.id));
+    const playerWarriors = Object.values(figures.warriors).filter(warrior => playerFiguresIds.includes(warrior.id));
+    const playerSentinels = Object.values(figures.sentinels).filter(sentinel => playerFiguresIds.includes(sentinel.id));
+    return [...playerGod, ...playerWarriors, ...playerSentinels];
 }
 
 export const CONFLICT_TYPE = {

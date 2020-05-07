@@ -9,6 +9,8 @@ import './ConflictRow.scss'
 const ConflictRow = ({ conflict, isActive }) => {
     const { regionNumber, conflictType } = conflict;
     const getPlayerGod = playerId => playerId.replace('p', 'g');
+    console.log(conflict)
+    const getPlayerStrength = playerId => conflict.figuresInRegion.filter(figure => figure.playerId === playerId).length;
 
     return (
         <div className={classnames("conflictRow", { isActive })}>
@@ -19,7 +21,10 @@ const ConflictRow = ({ conflict, isActive }) => {
             }
             {
                 conflictType === CONFLICT_TYPE.BATTLE
-                && conflict.playersIds.map(playerId => <Figure key={playerId} figureId={getPlayerGod(playerId)} />)
+                && conflict.playersIds.map(playerId => <div className="player">
+                    <Figure key={playerId} figureId={getPlayerGod(playerId)} />
+                    <div className="str">: {getPlayerStrength(playerId)}</div>
+                </div>)
             }
         </div>
     )

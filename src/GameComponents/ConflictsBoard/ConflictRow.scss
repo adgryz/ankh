@@ -27,10 +27,20 @@
         }
     }
 
-
     .conflictType {
         font-weight: bold;
         color: brown;
         margin-right: 5px;
+    }
+
+    .player {
+        display: flex;
+        margin-right: 5px;
+        justify-content: center;
+        align-items: center;
+        .str {
+            margin-left: 3px;
+            font-weight: bold;
+        }
     }
 }
