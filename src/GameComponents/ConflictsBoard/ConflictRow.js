@@ -9,7 +9,6 @@ import './ConflictRow.scss'
 const ConflictRow = ({ conflict, isActive }) => {
     const { regionNumber, conflictType } = conflict;
     const getPlayerGod = playerId => playerId.replace('p', 'g');
-    console.log(conflict)
     const getPlayerStrength = playerId => conflict.figuresInRegion.filter(figure => figure.playerId === playerId).length;
 
     return (

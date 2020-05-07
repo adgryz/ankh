@@ -6,6 +6,8 @@ import BattleCardsSelection from './BattleCardsSelection/BattleCardsSelection';
 import PlayedCards from './PlayedCards/PlayedCards';
 import './ConflictsBoard.scss'
 import conflict, { BATTLE_ACTION } from 'GameLogic/conflict';
+import PlagueBidder from './PlagueBidder/PlagueBidder';
+import BidResults from './BidResults/BidResults';
 
 const ConflictsBoard = () => {
     const conflicts = useSelector(({ conflict }) => conflict.conflicts);
@@ -21,15 +23,15 @@ const ConflictsBoard = () => {
     return (
         <div className="conflictsBoard">
             <div className="label">Conflicts</div>
-            <div>
-                {message}
-            </div>
             {
                 conflicts.map(conflict => <ConflictRow
                     isActive={activeConflictNumber === conflict.regionNumber}
                     conflict={conflict}
                     key={conflict.regionNumber} />)
             }
+            <div className="message">
+                {message}
+            </div>
             {
                 actionId === BATTLE_ACTION.SELECT_CARD && <BattleCardsSelection playerCards={playerCards} />
             }
@@ -37,10 +39,10 @@ const ConflictsBoard = () => {
                 actionId === BATTLE_ACTION.RESOLVE_CARDS && <PlayedCards playedCards={playedCards} />
             }
             {
-                actionId === BATTLE_ACTION.PLAGUE_BID && <div>Plague bidder for player x</div>
+                actionId === BATTLE_ACTION.PLAGUE_BID && <PlagueBidder />
             }
             {
-                actionId === BATTLE_ACTION.RESOLVE_PLAGUE && <div>Bidding results with marked winner</div>
+                actionId === BATTLE_ACTION.RESOLVE_PLAGUE && <BidResults />
             }
             {
                 (actionId === BATTLE_ACTION.SELECT_MONUMENT || actionId === BATTLE_ACTION.BUILD_MONUMENT)

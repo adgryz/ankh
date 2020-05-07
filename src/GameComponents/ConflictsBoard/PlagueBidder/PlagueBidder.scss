@@ -1,0 +1,52 @@
+.bidderContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .bidder {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .bidContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .followerImgContainer {
+        background: darkgreen;
+        border-radius: 50%;
+        padding: 2px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 2px
+    }
+
+    .followerImg {
+        filter: invert(1);
+    }
+    
+    .header {
+        font-weight: bold;
+        color: brown;
+        margin-bottom: 5px;
+    }
+
+    .bidButton {
+        padding:  5px;
+        background: brown;
+        color: burlywood;
+        font-weight: bold;
+        border-radius: 5px;
+        margin: 10px;
+        cursor: pointer;
+    }
+
+    .bidAmount {
+        color: red;
+        font-weight: bold;
+    }
+}

@@ -77,6 +77,11 @@ const board = createSlice({
             const { x, y, playerId } = payload;
             state.hexes[x][y].playerId = playerId;
         },
+        killFigure: (state, { payload }) => {
+            const { x, y } = payload;
+            state.hexes[x][y].figureId = undefined;
+            state.hexes[x][y].playerId = undefined;
+        },
         // BORDERS
         toggleBordersPreview: (state, { payload }) => {
             state.isBordersPreviewActive = payload.isActive;

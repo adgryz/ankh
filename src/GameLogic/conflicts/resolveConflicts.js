@@ -1,5 +1,7 @@
 import conflictReducer, { BATTLE_ACTION } from 'GameLogic/conflict'
 import gameReducer from 'GameLogic/game'
+import boardReducer from 'GameLogic/board'
+import figuresReducer from 'GameLogic/figures'
 
 import { getConflicts, getPlayerFiguresFromConflict, CONFLICT_TYPE } from './getConflicts'
 import { endEventEffect } from 'GameLogic/events/events';
@@ -35,8 +37,6 @@ export const resolveConflictEffect = ({ conflict }) => (dispatch, getState) => {
         dispatch(conflictReducer.actions.setCurrentPlayerId({ playerId: playersIds[0] }));
         sleep(1000).then(() => dispatch(selectBattleCardEffect()))
 
-        // 1 card selection
-        // 2 resolve plague
         // 3 resolve other cards
         // 4 monuments majority
         // 5 battle resolution
@@ -71,35 +71,107 @@ export const playBattleCardEffect = ({ card }) => (dispatch, getState) => {
         // Last player played battle card => resolve battle cards
         dispatch(conflictReducer.actions.setMessage({ message: `Played cards` }));
         dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.RESOLVE_CARDS }));
+        dispatch(conflictReducer.actions.setCurrentPlayerId({ playerId: players[0] }));
         dispatch(resolveCardsEffect());
     }
 }
 
 
-const resolveCardsEffect = () => (dispatch, getState) => {
+const resolveCardsEffect = () => async (dispatch, getState) => {
+    await sleep(3000);
     const { conflict } = getState();
-    const { playedCards } = conflict;
+    const { playedCards, activeConflictNumber } = conflict;
     const plaguePlayersIds = Object.entries(playedCards)
         .filter(([playerId, card]) => card === BATTLE_CARD.plague)
         .map(([playerId, card]) => playerId)
     const plaguePlayed = plaguePlayersIds.length > 0;
 
     if (plaguePlayed) {
-        dispatch(resolvePlagueEffect({ playersIds: plaguePlayersIds }));
+        plaguePlayersIds.forEach(playerId =>
+            dispatch(conflictReducer.actions.increasePlayerStrengthInConflict({
+                playerId,
+                amount: 1,
+                regionNumber: activeConflictNumber
+            }))
+        )
+        dispatch(startPlagueBidding({ playersIds: plaguePlayersIds }));
     } else {
-        dispatch(resolveOtherCardsEffect())
+        dispatch(resolveOtherCardsEffect());
     }
 }
 
-const resolvePlagueEffect = ({ playersIds }) => (dispatch, getState) => {
-    const { conflict, game } = getState();
+// PLAGUE
+
+const startPlagueBidding = ({ playersIds }) => (dispatch) => {
     dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.PLAGUE_BID }));
     dispatch(conflictReducer.actions.setMessage({ message: `Resolve plague` }));
     console.log('PLAGUE HAPPENS');
     playersIds.forEach(playerId => dispatch(conflictReducer.actions.removePlayerCard({ playerId })));
     playersIds.forEach(playerId => dispatch(gameReducer.actions.playBattleCard({ playerId, card: BATTLE_CARD.plague })));
-    dispatch(resolveOtherCardsEffect())
+    // dispatch(resolveOtherCardsEffect())
 }
+
+export const plagueBidEffect = ({ playerId, bid }) => (dispatch, getState) => {
+    const { conflict } = getState();
+    const { conflicts, activeConflictNumber, currentPlayerId } = conflict;
+
+    dispatch(conflictReducer.actions.setPlayerBid({ playerId, bid }))
+
+    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);
+    const players = currentConflict.playersIds;
+    const currentPlayerIndex = players.findIndex(p => p === currentPlayerId);
+    const nextPlayerId = currentPlayerIndex === players.length - 1 ? null : players[currentPlayerIndex + 1];
+
+    if (nextPlayerId) {
+        dispatch(conflictReducer.actions.setCurrentPlayerId({ playerId: nextPlayerId }));
+    } else {
+        // Last player placed his bid => resolve plague
+        dispatch(conflictReducer.actions.setMessage({ message: `Bid results` }));
+        dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.RESOLVE_PLAGUE }));
+        dispatch(resolvePlagueEffect());
+    }
+}
+
+const resolvePlagueEffect = () => async (dispatch, getState) => {
+    const { conflict } = getState();
+    const { conflicts, activeConflictNumber, playersBids } = conflict;
+    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);
+    const playersIds = currentConflict.playersIds;
+
+    let winnersIds = [];
+    let maxBid = 0;
+    Object.entries(playersBids).forEach(([playerId, bid]) => {
+        if (bid > maxBid) {
+            maxBid = bid;
+            winnersIds = [playerId];
+        } else if (bid === maxBid) {
+            winnersIds.push(playerId);
+        }
+    })
+
+
+    if (winnersIds.length > 1) {
+        await sleep(2000);
+        // kill all figures
+        const figures = currentConflict.figuresInRegion
+            .filter(figure => !figure.figureId.startsWith('g'));
+        dispatch(killFiguresEffect({ playersIds, figures }));
+    } else {
+        const winnerId = winnersIds[0];
+        dispatch(conflictReducer.actions.setBidWinnerId({ playerId: winnerId }))
+        await sleep(2000);
+
+        // kill all except winner figures
+        const figures = currentConflict.figuresInRegion
+            .filter(figure => !figure.figureId.startsWith('g'))
+            .filter(figure => figure.playerId !== winnerId);
+        dispatch(killFiguresEffect({ playersIds, figures }));
+    }
+
+    dispatch(resolveOtherCardsEffect());
+}
+
+// OTHER BATTLE CARDS EFFECTS
 
 const resolveOtherCardsEffect = () => (dispatch, getState) => {
     const { conflict } = getState();
@@ -130,9 +202,6 @@ const resolveCardEffect = ({ playerId, card }) => (dispatch, getState) => {
             break;
         case BATTLE_CARD.drought:
             dispatch(resolveDrought({ playerId }))
-            break;
-        case BATTLE_CARD.miracle:
-            dispatch(resolveMiracle({ playerId }))
             break;
         case BATTLE_CARD.build:
             dispatch(resolveBuildMonument({ playerId }))
@@ -169,7 +238,7 @@ const resolveDrought = ({ playerId }) => (dispatch, getState) => {
 
     const desertStrength = playerFiguresOnDesertLands.reduce((acc, curr) => acc + curr.strength, 0);
     const otherStrength = otherPlayerFigures.reduce((acc, curr) => acc + curr.strength, 0);
-    const newStrength = otherStrength + 2 * desertStrength;
+    const newStrength = otherStrength + 2 * desertStrength + 2;
     dispatch(conflictReducer.actions.changePlayerStrengthInConflict({ playerId, newStrength, regionNumber: activeConflictNumber }))
 
     console.log(`Player ${playerId} strength grows from ${desertStrength + otherStrength} to ${newStrength} from Drought`);
@@ -197,6 +266,8 @@ const resolveBuildMonument = ({ playerId, card }) => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.SELECT_MONUMENT }));
 }
 
+// MONUMENTS MAJORITY 
+
 const monumentMajorityEffect = () => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Monuments majority` }));
     const { conflict } = getState();
@@ -212,6 +283,30 @@ const monumentMajorityEffect = () => (dispatch, getState) => {
     )
 
     dispatch(finishConflictsEffect());
+}
+
+// HELPERS
+
+const killFiguresEffect = ({ figures, playersIds }) => (dispatch, getState) => {
+    // 1 Set killed figures amount (for miracle card)
+    playersIds.forEach(playerId => {
+        const killedAmount = figures.filter(figure => figure.playerId === playerId).length;
+        dispatch(conflictReducer.actions.setPlayerKilledFiguresAmount({ playerId, amount: killedAmount }))
+    })
+
+    // 2 kill figures
+    figures.forEach(({ figureId, playerId }) => dispatch(killFigureEffect({ figureId, playerId })))
+}
+
+const killFigureEffect = ({ figureId, playerId }) => (dispatch, getState) => {
+    const { figures } = getState();
+    const killableFigures = [...Object.values(figures.warriors), ...Object.values(figures.sentinels)];
+    const figure = killableFigures.find(figure => figure.id === figureId);
+    const { x, y } = figure;
+    // 2 Clear hexes
+    dispatch(boardReducer.actions.killFigure({ x, y }))
+    dispatch(figuresReducer.actions.killFigure({ figureId }))
+    dispatch(gameReducer.actions.addFigureToPlayerPool({ playerId, figureId }))
 }
 
 const calculatePlayerDevotionFromRegion = (playerId, monumentsInRegion) => {

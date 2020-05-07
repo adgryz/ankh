@@ -41,6 +41,15 @@ const figures = createSlice({
             const figure = getFigureById(figureId, state);
             figure.x = x;
             figure.y = y;
+        },
+        killFigure: (state, { payload }) => {
+            const { figureId } = payload;
+            if (figureId.startsWith('w')) {
+                delete state.warriors[figureId];
+            }
+            if (figureId.startsWith('s')) {
+                delete state.sentinels[figureId];
+            }
         }
     },
 })

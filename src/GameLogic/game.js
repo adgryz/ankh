@@ -277,6 +277,11 @@ const game = createSlice({
 
             state.selectedFigureFromPool = null;
         },
+        addFigureToPlayerPool: (state, { payload }) => {
+            const { figureId, playerId } = payload;
+            const pool = state.players[playerId].figuresPool;
+            pool.push(figureId)
+        },
         // BOARD
         setSelectedFigureId: (state, { payload }) => {
             state.selectedFigureId = payload.figureId

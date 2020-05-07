@@ -23,6 +23,11 @@ const getInitialState = () => {
         currentPlayerId: undefined,
         currentBattleActionId: undefined,
         currentConflictId: undefined,
+        playersBids: {},
+        bidWinnerId: undefined,
+        killedFiguresAmounts: {
+
+        }
     }
 }
 
@@ -71,11 +76,34 @@ const conflict = createSlice({
             const { playerId } = payload;
             delete state.playedCards[playerId];
         },
+        // DROUGHT
         changePlayerStrengthInConflict: (state, { payload }) => {
             const { playerId, newStrength, regionNumber } = payload;
             const conflict = state.conflicts.find(conflict => conflict.regionNumber === regionNumber);
             conflict.playersStrengths[playerId] = newStrength;
-        }
+        },
+        increasePlayerStrengthInConflict: (state, { payload }) => {
+            const { playerId, regionNumber, amount } = payload;
+            const conflict = state.conflicts.find(conflict => conflict.regionNumber === regionNumber);
+            conflict.playersStrengths[playerId] += amount;
+        },
+        // BIDS
+        setPlayerBid: (state, { payload }) => {
+            const { playerId, bid } = payload;
+            state.playersBids[playerId] = bid;
+        },
+        clearAfterBid: (state) => {
+            state.playersBids = {};
+            state.bidWinnerId = undefined;
+        },
+        setBidWinnerId: (state, { payload }) => {
+            state.bidWinnerId = payload.playerId;
+        },
+        //
+        setPlayerKilledFiguresAmount: (state, { payload }) => {
+            const { playerId, amount } = payload;
+            state.killedFiguresAmounts[playerId] = amount;
+        },
     },
 })
 

@@ -18,4 +18,12 @@
         font-size: 12px;
         transform: translateX(-50%);
     }
+
+    .message {
+        display: flex;
+        justify-content: center;
+        color: brown;
+        font-weight: bold;
+        margin: 5px;
+    }
 }
