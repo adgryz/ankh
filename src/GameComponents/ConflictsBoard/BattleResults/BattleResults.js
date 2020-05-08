@@ -3,28 +3,32 @@ import { useSelector } from 'react-redux';
 
 import Figure from 'GameComponents/Board/Figure'
 
-const BidResults = () => {
+const BattleResults = () => {
     const getPlayerGod = playerId => playerId.replace('p', 'g');
-    const playersBids = useSelector(({ conflict }) => conflict.playersBids);
-    const winnerId = useSelector(({ conflict }) => conflict.bidWinnerId);
+    const conflicts = useSelector(({ conflict }) => conflict.conflicts);
+    const activeConflictNumber = useSelector(({ conflict }) => conflict.activeConflictNumber);
+    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);
+    const { playersStrengths } = currentConflict;
+
+    const winnerId = useSelector(({ conflict }) => conflict.winnerId);
 
     return (
         <div>
             {
-                Object.entries(playersBids).map(([playerId, bid]) =>
+                Object.entries(playersStrengths).map(([playerId, strength]) => (
                     <div
                         key={playerId}
                         style={{ display: 'flex', alignItems: 'center', margin: 5 }}
                     >
                         <Figure figureId={getPlayerGod(playerId)} />
                         <div style={{ marginLeft: 5, fontWeight: 'bold', color: playerId === winnerId ? 'red' : 'brown' }}>
-                            {bid}
+                            {strength}
                         </div>
                     </div>
-                )
+                ))
             }
         </div>
     )
 }
 
-export default BidResults
+export default BattleResults

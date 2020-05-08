@@ -20,8 +20,8 @@ const ConflictRow = ({ conflict, isActive }) => {
             }
             {
                 conflictType === CONFLICT_TYPE.BATTLE
-                && conflict.playersIds.map(playerId => <div className="player">
-                    <Figure key={playerId} figureId={getPlayerGod(playerId)} />
+                && conflict.playersIds.map(playerId => <div key={playerId} className="player">
+                    <Figure figureId={getPlayerGod(playerId)} />
                     <div className="str">: {getPlayerStrength(playerId)}</div>
                 </div>)
             }

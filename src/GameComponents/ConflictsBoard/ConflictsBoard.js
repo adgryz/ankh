@@ -5,9 +5,11 @@ import ConflictRow from './ConflictRow'
 import BattleCardsSelection from './BattleCardsSelection/BattleCardsSelection';
 import PlayedCards from './PlayedCards/PlayedCards';
 import './ConflictsBoard.scss'
-import conflict, { BATTLE_ACTION } from 'GameLogic/conflict';
+import { BATTLE_ACTION } from 'GameLogic/conflict';
 import PlagueBidder from './PlagueBidder/PlagueBidder';
 import BidResults from './BidResults/BidResults';
+import BattleResults from './BattleResults/BattleResults';
+
 
 const ConflictsBoard = () => {
     const conflicts = useSelector(({ conflict }) => conflict.conflicts);
@@ -47,6 +49,9 @@ const ConflictsBoard = () => {
             {
                 (actionId === BATTLE_ACTION.SELECT_MONUMENT || actionId === BATTLE_ACTION.BUILD_MONUMENT)
                 && <div>{`[O] [P] [[T]]`}</div>
+            }
+            {
+                actionId === BATTLE_ACTION.RESOLVE_BATTLE && <BattleResults />
             }
         </div>
     )

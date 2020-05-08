@@ -261,9 +261,9 @@ const game = createSlice({
             player.devotion -= count;
         },
         increasePlayerDevotion: (state, { payload }) => {
-            const { playerId, count } = payload;
+            const { playerId, amount } = payload;
             const player = state.players[playerId];
-            player.devotion += count;
+            player.devotion += amount;
         },
         // POOL
         setSelectedFigureFromPool: (state, { payload }) => {
@@ -273,9 +273,10 @@ const game = createSlice({
             const { figureId } = payload;
             const pool = state.players[state.currentPlayerId].figuresPool;
             const index = pool.findIndex(figure => figure === figureId);
-            pool.splice(index, 1);
-
-            state.selectedFigureFromPool = null;
+            if (index !== -1) {
+                pool.splice(index, 1);
+                state.selectedFigureFromPool = null;
+            }
         },
         addFigureToPlayerPool: (state, { payload }) => {
             const { figureId, playerId } = payload;
@@ -307,23 +308,31 @@ const game = createSlice({
 
             if (monumentId.startsWith('o')) {
                 const ind = playerMonuments.obelisksIds.findIndex(id => id === monumentId);
-                playerMonuments.obelisksIds.splice(ind, 1);
+                if (ind !== -1) {
+                    playerMonuments.obelisksIds.splice(ind, 1);
+                }
             }
             if (monumentId.startsWith('p')) {
                 const ind = playerMonuments.pyramidsIds.findIndex(id => id === monumentId);
-                playerMonuments.pyramidsIds.splice(ind, 1);
+                if (ind !== -1) {
+                    playerMonuments.pyramidsIds.splice(ind, 1);
+                }
             }
             if (monumentId.startsWith('t')) {
                 const ind = playerMonuments.templesIds.findIndex(id => id === monumentId);
-                playerMonuments.templesIds.splice(ind, 1);
+                if (ind !== -1) {
+                    playerMonuments.templesIds.splice(ind, 1);
+                }
             }
         },
         // BATTLE CARD
-        playBattleCard: (state, { payload }) => {
+        removeCardFromPlayerAvailableCards: (state, { payload }) => {
             const { playerId, card } = payload;
             let playerCards = state.players[playerId].battleCards;
             const cardIndex = playerCards.findIndex(c => c === card);
-            playerCards.splice(cardIndex, 1);
+            if (cardIndex !== -1) {
+                playerCards.splice(cardIndex, 1);
+            }
         },
         recoverPlayerBattleCards: (state, { payload }) => {
             const { playerId } = payload;

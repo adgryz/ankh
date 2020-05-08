@@ -9,6 +9,8 @@ export const BATTLE_ACTION = {
 
     SELECT_MONUMENT: 'SELECT_MONUMENT',
     BUILD_MONUMENT: 'BUILD_MONUMENT',
+
+    RESOLVE_BATTLE: 'RESOLVE_BATTLE',
 }
 
 const getInitialState = () => {
@@ -19,15 +21,14 @@ const getInitialState = () => {
         activeConflictNumber: 1,
         conflicts: [],
         message: '',
+        // PER BATTLE STATE
         playedCards: {},
         currentPlayerId: undefined,
         currentBattleActionId: undefined,
-        currentConflictId: undefined,
         playersBids: {},
         bidWinnerId: undefined,
-        killedFiguresAmounts: {
-
-        }
+        killedFiguresAmounts: {},
+        winnerId: undefined,
     }
 }
 
@@ -46,6 +47,14 @@ const conflict = createSlice({
             state.isTieBreakerUsed = false;
             state.isConflictActive = false;
             state.activeConflictNumber = 1;
+            state.currentBattleActionId = undefined;
+            state.conflicts = [];
+            state.message = '';
+            state.playedCards = {};
+            state.playersBids = {};
+            state.bidWinnerId = undefined;
+            state.killedFiguresAmounts = {};
+            state.winnerId = undefined;
         },
         markTieBreakerUsed: (state) => {
             state.isTieBreakerUsed = true;
@@ -54,6 +63,13 @@ const conflict = createSlice({
             state.conflicts = payload.conflicts;
         },
         goToNextConflict: (state) => {
+            state.playedCards = {};
+            state.playersBids = {};
+            state.message = undefined;
+            state.bidWinnerId = undefined;
+            state.killedFiguresAmounts = {};
+            state.currentBattleActionId = undefined;
+            state.winnerId = undefined;
             state.activeConflictNumber++;
         },
         setMessage: (state, { payload }) => {
@@ -65,14 +81,11 @@ const conflict = createSlice({
         setCurrentBattleActionId: (state, { payload }) => {
             state.currentBattleActionId = payload.actionId;
         },
-        setCurrentConflictId: (state, { payload }) => {
-            state.currentConflictId = payload.conflictId;
-        },
         setPlayedCard: (state, { payload }) => {
             const { playerId, card } = payload;
             state.playedCards[playerId] = card;
         },
-        removePlayerCard: (state, { payload }) => {
+        removeCardFromPlayedCardsInConflict: (state, { payload }) => {
             const { playerId } = payload;
             delete state.playedCards[playerId];
         },
@@ -92,18 +105,32 @@ const conflict = createSlice({
             const { playerId, bid } = payload;
             state.playersBids[playerId] = bid;
         },
-        clearAfterBid: (state) => {
-            state.playersBids = {};
-            state.bidWinnerId = undefined;
-        },
         setBidWinnerId: (state, { payload }) => {
             state.bidWinnerId = payload.playerId;
         },
-        //
         setPlayerKilledFiguresAmount: (state, { payload }) => {
             const { playerId, amount } = payload;
-            state.killedFiguresAmounts[playerId] = amount;
+            if (state.killedFiguresAmounts[playerId] === undefined) {
+                state.killedFiguresAmounts[playerId] = amount;
+            }
         },
+        // RESOLUTION
+        setWinnerId: (state, { payload }) => {
+            state.winnerId = payload.playerId;
+        },
+        removeFigureFromConflicts: (state, { payload }) => {
+            const { figureId, strength, playerId } = payload;
+            state.conflicts.forEach(conflict => {
+                if (conflict.figuresInRegion) {
+                    const figureIndex = conflict.figuresInRegion.findIndex(figure => figure.figureId === figureId)
+                    if (figureIndex !== -1) {
+                        conflict.figuresInRegion.splice(figureIndex, 1)
+                        conflict.playersStrengths[playerId] -= strength;
+                    }
+                }
+            })
+
+        }
     },
 })
 

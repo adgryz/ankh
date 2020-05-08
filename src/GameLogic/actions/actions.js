@@ -42,7 +42,6 @@ export const endActionEffect = () => (dispatch, getState) => {
     // Clear after movements
     if (actionId === ACTIONS_IDS.MOVE) {
         dispatch(gameReducer.actions.clearMovedFigures());
-        return;
     }
 
     // Action reached max index

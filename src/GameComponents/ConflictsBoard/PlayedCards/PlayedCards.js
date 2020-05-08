@@ -12,7 +12,7 @@ const PlayedCards = ({ playedCards }) => {
     return (
         <div>
             {
-                Object.entries(playedCards).map(([playerId, card]) => <div style={{ display: 'flex', alignItems: 'center' }}>
+                Object.entries(playedCards).map(([playerId, card]) => <div key={playerId} style={{ display: 'flex', alignItems: 'center' }}>
                     <Figure figureId={getPlayerGod(playerId)} />
                     <img
                         width={40}
