@@ -1,0 +1,45 @@
+.monumentsSelection {
+    display:  flex;
+    justify-content: center;
+
+    .monumentContainer {
+        margin: 10px;
+        padding: 15px;
+        border: 3px solid brown;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+
+        &:hover {
+            border-color: salmon;
+        }
+    }
+
+    .costContainer {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .cost {
+        color: brown;
+        font-weight: bold;
+        margin-right: 3px;
+    }
+
+    .followerImgContainer {
+        background: darkgreen;
+        border-radius: 50%;
+        padding: 2px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 2px
+    }
+
+    .followerImg {
+        filter: invert(1);
+    }
+}

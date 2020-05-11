@@ -9,6 +9,8 @@ import { BATTLE_ACTION } from 'GameLogic/conflict';
 import PlagueBidder from './PlagueBidder/PlagueBidder';
 import BidResults from './BidResults/BidResults';
 import BattleResults from './BattleResults/BattleResults';
+import MonumentsSelection from './MonumentSelection/MonumentSelection';
+import { BATTLE_CARD } from 'GameLogic/conflicts/const';
 
 
 const ConflictsBoard = () => {
@@ -20,7 +22,13 @@ const ConflictsBoard = () => {
     const currentPlayerId = useSelector(({ conflict }) => conflict.currentPlayerId);
     const playerCards = useSelector(({ game }) => currentPlayerId ? game.players[currentPlayerId].battleCards : []);
 
-    const playedCards = useSelector(({ conflict }) => conflict.playedCards);
+    const plagueCards = useSelector(({ conflict }) =>
+        conflict.plaguePlayersIds.map(id => [id, BATTLE_CARD.plague]));
+    const beforeBattleCards = useSelector(({ conflict }) => conflict.beforeBattleCards);
+    const miracleCards = useSelector(({ conflict }) =>
+        conflict.miraclePlayersIds.map(id => [id, BATTLE_CARD.miracle]));
+
+    const playedCards = [...plagueCards, ...beforeBattleCards, ...miracleCards];
 
     return (
         <div className="conflictsBoard">
@@ -48,7 +56,7 @@ const ConflictsBoard = () => {
             }
             {
                 (actionId === BATTLE_ACTION.SELECT_MONUMENT || actionId === BATTLE_ACTION.BUILD_MONUMENT)
-                && <div>{`[O] [P] [[T]]`}</div>
+                && <MonumentsSelection />
             }
             {
                 actionId === BATTLE_ACTION.RESOLVE_BATTLE && <BattleResults />

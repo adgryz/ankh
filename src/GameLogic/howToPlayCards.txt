@@ -1,0 +1,15 @@
+
+First players select card they want to play
+depending on card type we set data in one of those  three arrays
+
+plaguePlayersIds: [p4,p5]
+beforeBattleCards: [[p1,c1], [p2,c2], [p3,c1]]
+miraclePlayersIds: [p6]
+
+2. If any id in plaguePlayersIds we resolve plague bidding then clear it
+
+3. If any entries in beforeBattleCards we resolve first, at the end we remove first entry, if still some entries we resolve next
+
+4 Then we start monumentsMajority phase and battle resolution
+
+5. If any id in miraclePlayersIds we resolve miracle for each player, 

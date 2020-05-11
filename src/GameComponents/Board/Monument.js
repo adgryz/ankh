@@ -2,10 +2,10 @@ import React from 'react';
 
 import './Monument.scss';
 
-const Monument = ({ monumentId }) => {
+const Monument = ({ monumentId, size }) => {
     return (
         <div className="monument">
-            <img width={25} height={25} src={getMonumentImg(monumentId)} alt="figure" />
+            <img width={25 || size} height={25 || size} src={getMonumentImg(monumentId)} alt="figure" />
         </div>
     )
 };

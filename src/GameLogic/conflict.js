@@ -22,7 +22,9 @@ const getInitialState = () => {
         conflicts: [],
         message: '',
         // PER BATTLE STATE
-        playedCards: {},
+        plaguePlayersIds: [],
+        beforeBattleCards: [], // without plague cards and without miracle cards, entries are [playerId,card]
+        miraclePlayersIds: [],
         currentPlayerId: undefined,
         currentBattleActionId: undefined,
         playersBids: {},
@@ -49,8 +51,10 @@ const conflict = createSlice({
             state.activeConflictNumber = 1;
             state.currentBattleActionId = undefined;
             state.conflicts = [];
+            state.plaguePlayersIds = [];
+            state.beforeBattleCards = [];
+            state.miraclePlayersIds = [];
             state.message = '';
-            state.playedCards = {};
             state.playersBids = {};
             state.bidWinnerId = undefined;
             state.killedFiguresAmounts = {};
@@ -63,7 +67,9 @@ const conflict = createSlice({
             state.conflicts = payload.conflicts;
         },
         goToNextConflict: (state) => {
-            state.playedCards = {};
+            state.plaguePlayersIds = [];
+            state.beforeBattleCards = [];
+            state.miraclePlayersIds = [];
             state.playersBids = {};
             state.message = undefined;
             state.bidWinnerId = undefined;
@@ -81,13 +87,18 @@ const conflict = createSlice({
         setCurrentBattleActionId: (state, { payload }) => {
             state.currentBattleActionId = payload.actionId;
         },
-        setPlayedCard: (state, { payload }) => {
-            const { playerId, card } = payload;
-            state.playedCards[playerId] = card;
+        // CARDS RESOLUTION
+        addPlaguePlayerId: (state, { payload }) => {
+            state.plaguePlayersIds.push(payload.playerId);
         },
-        removeCardFromPlayedCardsInConflict: (state, { payload }) => {
-            const { playerId } = payload;
-            delete state.playedCards[playerId];
+        setBeforeBattleCards: (state, { payload }) => {
+            state.beforeBattleCards = payload.battleCards;
+        },
+        removeFirstBeforeBattleCard: (state) => {
+            state.beforeBattleCards.shift();
+        },
+        addMiraclePlayerId: (state, { payload }) => {
+            state.miraclePlayersIds.push(payload.playerId);
         },
         // DROUGHT
         changePlayerStrengthInConflict: (state, { payload }) => {
