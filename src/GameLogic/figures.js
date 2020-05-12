@@ -18,6 +18,19 @@ const getInitialState = () => {
     }
 }
 
+const getName = char => {
+    switch (char) {
+        case 'g':
+            return 'gods'
+        case 'w':
+            return 'warriors'
+        case 's':
+            return 'sentinels'
+        default:
+            throw new Error('sth went wrong')
+    }
+}
+
 export const getFigureById = (figureId, state) => state.gods[figureId] || state.warriors[figureId] || state.sentinels[figureId];
 
 const figures = createSlice({
@@ -26,15 +39,7 @@ const figures = createSlice({
     reducers: {
         addFigure: (state, { payload }) => {
             const { figureId, playerId, x, y } = payload;
-            if (figureId.startsWith('g')) {
-                state.gods[figureId] = { id: figureId, playerId, x, y, strength: 1 };;
-            }
-            if (figureId.startsWith('w')) {
-                state.warriors[figureId] = { id: figureId, playerId, x, y, strength: 1 };;
-            }
-            if (figureId.startsWith('s')) {
-                state.sentinels[figureId] = { id: figureId, playerId, x, y, strength: 1 };;
-            }
+            state[getName(figureId[0])][figureId] = { id: figureId, playerId, x, y, strength: 1 };
         },
         changeFigurePosition: (state, { payload }) => {
             const { x, y, figureId } = payload;
@@ -42,13 +47,18 @@ const figures = createSlice({
             figure.x = x;
             figure.y = y;
         },
+        increaseFigureStrength: (state, { payload }) => {
+            const { figureId, amount } = payload;
+            state[getName(figureId[0])][figureId].strength += amount;
+        },
+        decreaseFigureStrength: (state, { payload }) => {
+            const { figureId, amount } = payload;
+            state[getName(figureId[0])][figureId].strength -= amount;
+        },
         killFigure: (state, { payload }) => {
             const { figureId } = payload;
-            if (figureId.startsWith('w')) {
-                delete state.warriors[figureId];
-            }
-            if (figureId.startsWith('s')) {
-                delete state.sentinels[figureId];
+            if (figureId[0] !== 'g') {
+                delete state[getName(figureId[0])][figureId]
             }
         }
     },

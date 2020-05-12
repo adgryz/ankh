@@ -356,11 +356,12 @@ export const resolveSelectMonumentToBuildEffect = ({ monumentType }) => (dispatc
 }
 
 export const resolvePlaceMonumentEffect = ({ x, y }) => (dispatch, getState) => {
-    const { conflict, monuments, board } = getState();
+    const { conflict, monuments, board, game } = getState();
     const { monumentToBeBuilt, activeConflictNumber } = conflict;
     const { playerId, monumentType } = monumentToBeBuilt;
     const { hexes } = board;
     const { obelisks, temples, pyramids } = monuments;
+    const { players } = game;
 
     const chosenHex = hexes[x][y];
     if (chosenHex.region !== activeConflictNumber) {
@@ -383,10 +384,25 @@ export const resolvePlaceMonumentEffect = ({ x, y }) => (dispatch, getState) => 
     dispatch(gameReducer.actions.addMonumentToPlayer({ playerId, monumentId }))
     dispatch(monumentsReducer.actions.addNewMonument({ x, y, playerId, monumentId }))
 
+    if (monumentType === 't' && players[playerId].god.unlockedPowers.includes('Temple Attuned')) {
+        dispatch(resolveTempleAttunedEffect({ playerId, activeConflictNumber }))
+    }
+
     const monumentName = monumentType === 'o' ? 'obelisk' : monumentType === 't' ? 'temple' : 'pyramid';
     console.log(`Player ${playerId} builds ${monumentName} in region ${activeConflictNumber} `)
 
     dispatch(afterBeforeBattleCardResolvedEffect());
+}
+
+const resolveTempleAttunedEffect = ({ playerId, activeConflictNumber }) => (dispatch, getState) => {
+    dispatch(figuresReducer.actions.increaseFigureStrength({
+        figureId: `g${playerId[1]}`,
+        amount: 1
+    }));
+    // TO DO - if Amun played drought, increase by 2
+    dispatch(conflictReducer.actions.increasePlayerStrengthInConflict({
+        playerId, regionNumber: activeConflictNumber, amount: 1
+    }))
 }
 
 export const cancelBuildMonumentEffect = () => (dispatch) => {

@@ -1,6 +1,7 @@
 import gameReducer from 'GameLogic/game'
 import boardReducer from 'GameLogic/board'
 import monumentsReducer from 'GameLogic/monuments'
+import figuresReducer from 'GameLogic/figures';
 
 import { getNeutralMonuments, getPlayerFigures } from 'GameLogic/selectors'
 import { isAnyAdjacentAndInSameRegion } from 'GameLogic/utils/hexUtils';
@@ -41,7 +42,7 @@ export const controlMonumentEffect = ({ x, y }) => (dispatch, getState) => {
             return;
         } else {
             // add enemy monument to player effect
-            dispatch(addMonumentToPlayerEffect({ x, y, playerId, monumentId: selectedMonumentId }))
+            dispatch(addMonumentToPlayerEffect({ x, y, playerId, monumentId: selectedMonumentId, monumentOwnerId }))
             dispatch(gameReducer.actions.removeMonumentFromPlayer({ monumentId: selectedMonumentId, playerId: monumentOwnerId }))
             dispatch(endEventEffect());
         }
@@ -49,8 +50,33 @@ export const controlMonumentEffect = ({ x, y }) => (dispatch, getState) => {
 
 }
 
-export const addMonumentToPlayerEffect = ({ x, y, playerId, monumentId }) => (dispatch, getState) => {
+export const addMonumentToPlayerEffect = ({ x, y, playerId, monumentId, monumentOwnerId }) => (dispatch, getState) => {
     dispatch(boardReducer.actions.changeMonumentOwner({ x, y, playerId }));
     dispatch(gameReducer.actions.addMonumentToPlayer({ monumentId, playerId }));
     dispatch(monumentsReducer.actions.setMonumentPlayer({ monumentId, playerId }))
+
+    if (monumentId[0] === 't') {
+        dispatch(resolveTempleAttunedEffect({ playerId, monumentOwnerId }));
+    }
+}
+
+const resolveTempleAttunedEffect = ({ playerId, monumentOwnerId }) => (dispatch, getState) => {
+    const { game: { players } } = getState();
+    const newOwner = players[playerId];
+    if (newOwner.god.unlockedPowers.includes('Temple Attuned')) {
+        dispatch(figuresReducer.actions.increaseFigureStrength({
+            figureId: `g${playerId[1]}`,
+            amount: 1
+        }));
+
+        if (monumentOwnerId) {
+            const oldOwner = players[monumentOwnerId];
+            if (oldOwner.god.unlockedPowers.includes('Temple Attuned')) {
+                dispatch(figuresReducer.actions.increaseFigureStrength({
+                    figureId: `g${playerId[1]}`,
+                    amount: 1
+                }));
+            }
+        }
+    }
 }
