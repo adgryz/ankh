@@ -15,8 +15,14 @@ const calculateFollowers = (monuments, figures, playerId, hexes) => {
 }
 
 export const gainFollowersEffect = () => (dispatch, getState) => {
-    const { monuments, figures, board: { hexes }, game: { currentPlayerId } } = getState();
-    const newFollowers = calculateFollowers(monuments, figures, currentPlayerId, hexes);
+    const { monuments, figures, board: { hexes }, game } = getState();
+    const { currentPlayerId, players } = game;
+    const powers = players[currentPlayerId].god.unlockedPowers;
+    let extraFollowers = 0;
+    if (powers.includes('Revered')) {
+        extraFollowers++;
+    }
+    const newFollowers = calculateFollowers(monuments, figures, currentPlayerId, hexes) + extraFollowers;
     dispatch(gameReducer.actions.increaseFollowers({ amount: newFollowers }));
     dispatch(endActionEffect());
 }

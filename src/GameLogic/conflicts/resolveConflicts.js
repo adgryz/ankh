@@ -260,14 +260,23 @@ const resolveDroughtEffect = ({ playerId }) => (dispatch, getState) => {
 const resolveFloodEffect = ({ playerId }) => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Player ${playerId} uses Flood` }));
 
-    const { conflict, figures, board: { hexes } } = getState();
+    const { conflict, figures, game: { players }, board: { hexes } } = getState();
     const { conflicts, activeConflictNumber } = conflict;
     const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);
     const playerFigures = getPlayerFiguresFromConflict(currentConflict.figuresInRegion, figures, playerId);
-    const playerFiguresOnFertileLandsCount = playerFigures.filter(({ x, y }) => hexes[x][y].areaType === 'G').length;
-    dispatch(gameReducer.actions.increasePlayerFollowers({ playerId, amount: playerFiguresOnFertileLandsCount }))
+    const playerFiguresOnFertileLandsAmount = playerFigures.filter(({ x, y }) => hexes[x][y].areaType === 'G').length;
 
-    console.log(`Player ${playerId} gets ${playerFiguresOnFertileLandsCount} followers from Flood`);
+    const powers = players[playerId].god.unlockedPowers;
+    let multiplier = 1;
+    if (powers.includes('Bountiful')) {
+        multiplier = 2;
+    }
+
+    const newFollowers = multiplier * playerFiguresOnFertileLandsAmount;
+
+    dispatch(gameReducer.actions.increasePlayerFollowers({ playerId, amount: newFollowers }))
+
+    console.log(`Player ${playerId} gets ${newFollowers} followers from Flood`);
 
     dispatch(afterBeforeBattleCardResolvedEffect());
 }
@@ -312,7 +321,6 @@ export const resolveBuildMonumentEffect = ({ playerId }) => (dispatch, getState)
 export const resolveSelectMonumentToBuildEffect = ({ monumentType }) => (dispatch, getState) => {
     const { game, conflict } = getState();
 
-    // TODO - resolve case when player doesn't want to build any monument
     const [playerId, ...rest] = conflict.beforeBattleCards[0];
     const { monuments } = game.players[playerId];
     const { followers } = game.players[playerId]
