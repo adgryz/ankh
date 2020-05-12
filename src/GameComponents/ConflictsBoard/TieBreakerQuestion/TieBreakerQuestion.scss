@@ -1,0 +1,31 @@
+.tieBreakerQuestion {
+    .question {
+        font-weight: bold;
+        color: brown;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: space-around;
+
+        .cancel {
+            margin-top: 20px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: brown;
+            cursor: pointer;
+            color: yellow;
+        }
+    
+        .confirm {
+            margin-top: 20px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: brown;
+            color: red;
+            cursor: pointer;
+        }
+    }
+}

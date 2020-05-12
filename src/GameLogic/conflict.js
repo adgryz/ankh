@@ -11,6 +11,7 @@ export const BATTLE_ACTION = {
     BUILD_MONUMENT: 'BUILD_MONUMENT',
 
     RESOLVE_BATTLE: 'RESOLVE_BATTLE',
+    TIE_BREAKER_QUESTION: 'TIE_BREAKER_QUESTION'
 }
 
 const getInitialState = () => {
@@ -44,6 +45,9 @@ const conflict = createSlice({
     reducers: {
         giveTieBreakerToPlayer: (state, { payload }) => {
             state.tieBreakerOwnerId = payload.playerId;
+        },
+        setTieBreakerUsed: (state) => {
+            state.isTieBreakerUsed = true;
         },
         setConflictActive: (state) => {
             state.isConflictActive = true;

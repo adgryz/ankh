@@ -10,6 +10,7 @@ import PlagueBidder from './PlagueBidder/PlagueBidder';
 import BidResults from './BidResults/BidResults';
 import BattleResults from './BattleResults/BattleResults';
 import MonumentsSelection from './MonumentSelection/MonumentSelection';
+import TieBreakerQuestion from './TieBreakerQuestion/TieBreakerQuestion';
 import { BATTLE_CARD } from 'GameLogic/conflicts/const';
 
 
@@ -60,6 +61,9 @@ const ConflictsBoard = () => {
             }
             {
                 actionId === BATTLE_ACTION.RESOLVE_BATTLE && <BattleResults />
+            }
+            {
+                actionId === BATTLE_ACTION.TIE_BREAKER_QUESTION && <TieBreakerQuestion />
             }
         </div>
     )

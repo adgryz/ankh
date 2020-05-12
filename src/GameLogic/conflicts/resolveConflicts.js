@@ -285,6 +285,9 @@ const resolveMiracleEffect = ({ playerId }) => (dispatch, getState) => {
     console.log(`Player ${playerId} gets ${playerDevotion} devotion from Miracle`)
 }
 
+
+// BUILD MONUMENT
+
 export const resolveBuildMonumentEffect = ({ playerId }) => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Player ${playerId} uses Build Monument` }));
 
@@ -309,7 +312,7 @@ export const resolveBuildMonumentEffect = ({ playerId }) => (dispatch, getState)
 export const resolveSelectMonumentToBuildEffect = ({ monumentType }) => (dispatch, getState) => {
     const { game, conflict } = getState();
 
-    // TO DO - resolve case when player doesn't want to build any monument
+    // TODO - resolve case when player doesn't want to build any monument
     const [playerId, ...rest] = conflict.beforeBattleCards[0];
     const { monuments } = game.players[playerId];
     const { followers } = game.players[playerId]
@@ -367,6 +370,10 @@ export const resolvePlaceMonumentEffect = ({ x, y }) => (dispatch, getState) => 
     dispatch(afterBeforeBattleCardResolvedEffect());
 }
 
+export const cancelBuildMonumentEffect = () => (dispatch) => {
+    dispatch(afterBeforeBattleCardResolvedEffect());
+}
+
 // MONUMENTS MAJORITY
 
 const monumentMajorityEffect = () => (dispatch, getState) => {
@@ -398,15 +405,17 @@ const monumentMajorityEffect = () => (dispatch, getState) => {
     dispatch(resolveBattleResult());
 }
 
+// TIE BREAKER
+
 const resolveBattleResult = () => async (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Battle result` }));
     dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.RESOLVE_BATTLE }));
 
     const { conflict } = getState();
-    const { conflicts, activeConflictNumber, miraclePlayersIds } = conflict;
+    const { conflicts, activeConflictNumber, isTieBreakerUsed, tieBreakerOwnerId } = conflict;
 
     const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);;
-    const { playersStrengths, playersIds } = currentConflict
+    const { playersStrengths } = currentConflict
 
     let winnersIds = [];
     let maxStr = 0;
@@ -422,33 +431,68 @@ const resolveBattleResult = () => async (dispatch, getState) => {
     if (winnersIds.length > 1) {
         await sleep(2000);
 
-        // TODO - ask for Tiebreaker
-
-        // kill all figures
-        const figures = currentConflict.figuresInRegion
-            .filter(figure => !figure.figureId.startsWith('g'));
-        dispatch(killFiguresEffect({ playersIds, figures }));
+        const oneOfWinnersHasTieBreaker = winnersIds.find(id => id === tieBreakerOwnerId)
+        if (!isTieBreakerUsed && oneOfWinnersHasTieBreaker) {
+            dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.TIE_BREAKER_QUESTION }));
+            return;
+        }
+        dispatch(resolveNoBattleWinnerEffect());
     } else {
-        const winnerId = winnersIds[0]
-        dispatch(conflictReducer.actions.setWinnerId({ playerId: winnerId }))
-        await sleep(2000);
-
-        // kill all except winner figures
-        const figures = currentConflict.figuresInRegion
-            .filter(figure => !figure.figureId.startsWith('g'))
-            .filter(figure => figure.playerId !== winnerId);
-        dispatch(killFiguresEffect({ playersIds, figures }));
-
-        dispatch(gameReducer.actions.increasePlayerDevotion({ playerId: winnerId, amount: 1 }))
-
-        console.log(`Player ${winnerId} gets 1 devotion from winning the battle`);
+        dispatch(resolveBattleWinnerEffect({ winnerId: winnersIds[0] }))
     }
 
+    dispatch(afterBattleResolutionEffect());
+}
 
-    // Resolve miracle cards
+export const denyTieBreakerUseEffect = () => async (dispatch, getState) => {
+    dispatch(resolveNoBattleWinnerEffect());
+    dispatch(afterBattleResolutionEffect());
+}
+
+export const confirmTieBreakerUseEffect = () => async (dispatch, getState) => {
+    const { conflict } = getState();
+    const { tieBreakerOwnerId } = conflict;
+
+    dispatch(conflictReducer.actions.setTieBreakerUsed());
+    dispatch(resolveBattleWinnerEffect({ winnerId: tieBreakerOwnerId }))
+    dispatch(afterBattleResolutionEffect());
+}
+
+const resolveNoBattleWinnerEffect = () => async (dispatch, getState) => {
+    const { conflict } = getState();
+    const { conflicts, activeConflictNumber } = conflict;
+    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);;
+    const { playersIds } = currentConflict
+
+    const figures = currentConflict.figuresInRegion
+        .filter(figure => !figure.figureId.startsWith('g'));
+    dispatch(killFiguresEffect({ playersIds, figures }));
+}
+
+const resolveBattleWinnerEffect = ({ winnerId }) => async (dispatch, getState) => {
+    const { conflict } = getState();
+    const { conflicts, activeConflictNumber } = conflict;
+    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);;
+    const { playersIds } = currentConflict
+
+    dispatch(conflictReducer.actions.setWinnerId({ playerId: winnerId }))
+    await sleep(2000);
+
+    // kill all except winner figures
+    const figures = currentConflict.figuresInRegion
+        .filter(figure => !figure.figureId.startsWith('g'))
+        .filter(figure => figure.playerId !== winnerId);
+    dispatch(killFiguresEffect({ playersIds, figures }));
+
+    dispatch(gameReducer.actions.increasePlayerDevotion({ playerId: winnerId, amount: 1 }))
+
+    console.log(`Player ${winnerId} gets 1 devotion from winning the battle`);
+}
+
+const afterBattleResolutionEffect = () => async (dispatch, getState) => {
+    const { conflict } = getState();
+    const { miraclePlayersIds } = conflict;
     miraclePlayersIds.forEach(playerId => dispatch(resolveMiracleEffect({ playerId })))
-
-    // 6. Go to next conflict or end conflicts
     dispatch(finishCurrentConflictEffect())
 }
 

@@ -6,8 +6,8 @@ import battle from './battle.svg';
 import './TieBreakerToken.scss';
 
 const TieBreakerToken = () => {
-    const isUsed = useSelector(({ conflict }) => conflict.isTieBreakerUsed)
-    return <div className={classnames("tieBreakerToken", { isUsed })}>
+    const tieBreakerUsed = useSelector(({ conflict }) => conflict.isTieBreakerUsed)
+    return <div className={classnames("tieBreakerToken", { tieBreakerUsed })}>
         <img width={15} height={15} alt="breaker" src={battle} />
     </div>
 }
