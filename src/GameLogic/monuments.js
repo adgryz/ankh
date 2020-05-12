@@ -40,6 +40,24 @@ const monuments = createSlice({
             if (monumentId.startsWith('t')) {
                 state.temples[monumentId].playerId = playerId;
             }
+        },
+        addNewMonument: (state, { payload }) => {
+            const { monumentId, playerId, x, y } = payload;
+            const newMonument = {
+                monumentId,
+                playerId,
+                x,
+                y,
+            }
+            if (monumentId.startsWith('o')) {
+                state.obelisks[monumentId] = newMonument;
+            }
+            if (monumentId.startsWith('p')) {
+                state.pyramids[monumentId] = newMonument;
+            }
+            if (monumentId.startsWith('t')) {
+                state.temples[monumentId] = newMonument;
+            }
         }
     },
 })

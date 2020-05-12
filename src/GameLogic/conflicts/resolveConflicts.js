@@ -2,6 +2,7 @@ import conflictReducer, { BATTLE_ACTION } from 'GameLogic/conflict'
 import gameReducer from 'GameLogic/game'
 import boardReducer from 'GameLogic/board'
 import figuresReducer from 'GameLogic/figures'
+import monumentsReducer from 'GameLogic/monuments'
 
 import { getConflicts, getPlayerFiguresFromConflict, CONFLICT_TYPE } from './getConflicts'
 import { endEventEffect } from 'GameLogic/events/events';
@@ -18,7 +19,7 @@ export const resolveConflictEffect = ({ conflict }) => (dispatch, getState) => {
     const { conflictType, regionNumber, playerId, monumentsInRegion, playersIds } = conflict;
     if (conflictType === CONFLICT_TYPE.NO_BATTLE) {
         dispatch(conflictReducer.actions.setMessage({ message: `No battle in region ${regionNumber}` }));
-        console.log('NO BATTLE')
+        console.log('No battle')
         dispatch(finishCurrentConflictEffect())
         return;
     }
@@ -119,7 +120,6 @@ const resolveCardsEffect = () => async (dispatch, getState) => {
 const startPlagueBidding = ({ playersIds }) => (dispatch) => {
     dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.PLAGUE_BID }));
     dispatch(conflictReducer.actions.setMessage({ message: `Resolve plague` }));
-    console.log('PLAGUE HAPPENS');
     playersIds.forEach(playerId => dispatch(gameReducer.actions.removeCardFromPlayerAvailableCards({ playerId, card: BATTLE_CARD.plague })));
 }
 
@@ -199,9 +199,7 @@ const resolveOtherCardsEffect = () => (dispatch, getState) => {
 
 const resolveBeforeBattleCardEffect = ({ playerId, card }) => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Resolve ${card}` }));
-
     dispatch(gameReducer.actions.removeCardFromPlayerAvailableCards({ playerId, card }));
-    dispatch(conflictReducer.actions.removeFirstBeforeBattleCard());
 
     switch (card) {
         case BATTLE_CARD.cycle:
@@ -214,7 +212,7 @@ const resolveBeforeBattleCardEffect = ({ playerId, card }) => (dispatch, getStat
             dispatch(resolveDroughtEffect({ playerId }))
             break;
         case BATTLE_CARD.build:
-            dispatch(resolveSelectMonumentToBuildEffect({ playerId }))
+            dispatch(resolveBuildMonumentEffect({ playerId }))
             break;
         default:
             break;
@@ -222,6 +220,8 @@ const resolveBeforeBattleCardEffect = ({ playerId, card }) => (dispatch, getStat
 }
 
 const afterBeforeBattleCardResolvedEffect = () => (dispatch, getState) => {
+    dispatch(conflictReducer.actions.removeFirstBeforeBattleCard());
+
     const { conflict } = getState();
     const { beforeBattleCards } = conflict;
     if (beforeBattleCards.length === 0) {
@@ -265,7 +265,7 @@ const resolveFloodEffect = ({ playerId }) => (dispatch, getState) => {
     const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);
     const playerFigures = getPlayerFiguresFromConflict(currentConflict.figuresInRegion, figures, playerId);
     const playerFiguresOnFertileLandsCount = playerFigures.filter(({ x, y }) => hexes[x][y].areaType === 'G').length;
-    dispatch(gameReducer.actions.increasePlayerFollowers({ playerId, count: playerFiguresOnFertileLandsCount }))
+    dispatch(gameReducer.actions.increasePlayerFollowers({ playerId, amount: playerFiguresOnFertileLandsCount }))
 
     console.log(`Player ${playerId} gets ${playerFiguresOnFertileLandsCount} followers from Flood`);
 
@@ -285,32 +285,111 @@ const resolveMiracleEffect = ({ playerId }) => (dispatch, getState) => {
     console.log(`Player ${playerId} gets ${playerDevotion} devotion from Miracle`)
 }
 
-export const resolveSelectMonumentToBuildEffect = ({ playerId }) => (dispatch, getState) => {
+export const resolveBuildMonumentEffect = ({ playerId }) => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Player ${playerId} uses Build Monument` }));
-    dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.SELECT_MONUMENT }));
-    dispatch(conflictReducer.actions.setMessage({ message: `${playerId} chose monument you want to build` }));
-    // TO DO - resolve build monument card
+
+    const { game } = getState();
+    const { monuments } = game.players[playerId];
+    const { followers } = game.players[playerId]
+
+    const obeliskCost = 2 + 2 * monuments.obelisksIds.length;
+    const templeCost = 2 + 2 * monuments.templesIds.length;
+    const pyramidCost = 2 + 2 * monuments.pyramidsIds.length;
+
+    if (followers < obeliskCost && followers < templeCost && followers < pyramidCost) {
+        console.log(`Player ${playerId} has not enough followers to build anything`)
+        dispatch(afterBeforeBattleCardResolvedEffect());
+    } else {
+        dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.SELECT_MONUMENT }));
+        dispatch(conflictReducer.actions.setMessage({ message: `${playerId} chose monument you want to build` }));
+    }
+
 }
 
-const resolveBuildMonumentEffect = ({ playerId }) => (dispatch, getState) => {
-    dispatch(conflictReducer.actions.setMessage({ message: `Player ${playerId} uses Build Monument` }));
-    dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.SELECT_MONUMENT }));
-    // TO DO - resolve build monument card
+export const resolveSelectMonumentToBuildEffect = ({ monumentType }) => (dispatch, getState) => {
+    const { game, conflict } = getState();
 
+    // TO DO - resolve case when player doesn't want to build any monument
+    const [playerId, ...rest] = conflict.beforeBattleCards[0];
+    const { monuments } = game.players[playerId];
+    const { followers } = game.players[playerId]
+
+    const obeliskCost = 2 + 2 * monuments.obelisksIds.length;
+    const templeCost = 2 + 2 * monuments.templesIds.length;
+    const pyramidCost = 2 + 2 * monuments.pyramidsIds.length;
+
+    const cost = monumentType === 'o' ? obeliskCost : monumentType === 't' ? templeCost : pyramidCost;
+
+    if (cost > followers) {
+        alert(`You don't have enough followers`);
+        return;
+    }
+
+    dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.BUILD_MONUMENT }));
+    const monumentName = monumentType === 'o' ? 'obelisk' : monumentType === 't' ? 'temple' : 'pyramid';
+    dispatch(conflictReducer.actions.setMessage({ message: `${playerId} place your ${monumentName} in current battle region` }));
+
+    dispatch(conflictReducer.actions.setMonumentToBeBuilt({ playerId, monumentType }))
+    dispatch(gameReducer.actions.decreasePlayerFollowers({ playerId, amount: cost }))
+}
+
+export const resolvePlaceMonumentEffect = ({ x, y }) => (dispatch, getState) => {
+    const { conflict, monuments, board } = getState();
+    const { monumentToBeBuilt, activeConflictNumber } = conflict;
+    const { playerId, monumentType } = monumentToBeBuilt;
+    const { hexes } = board;
+    const { obelisks, temples, pyramids } = monuments;
+
+    const chosenHex = hexes[x][y];
+    if (chosenHex.region !== activeConflictNumber) {
+        alert('You have to build your monument in current conflict region');
+        return;
+    }
+    if (chosenHex.monumentId || chosenHex.figureId) {
+        alert('You have to build your monument on empty space');
+        return;
+    }
+
+    const monumentId = monumentType === 'o'
+        ? `o${Object.values(obelisks).length + 1}`
+        : monumentType === 't'
+            ? `t${Object.values(temples).length + 1}`
+            : `p${Object.values(pyramids).length + 1
+            }`
+
+    dispatch(boardReducer.actions.setMonuments({ monuments: [{ x, y, playerId, id: monumentId }] }));
+    dispatch(gameReducer.actions.addMonumentToPlayer({ playerId, monumentId }))
+    dispatch(monumentsReducer.actions.addNewMonument({ x, y, playerId, monumentId }))
+
+    const monumentName = monumentType === 'o' ? 'obelisk' : monumentType === 't' ? 'temple' : 'pyramid';
+    console.log(`Player ${playerId} builds ${monumentName} in region ${activeConflictNumber} `)
+
+    dispatch(afterBeforeBattleCardResolvedEffect());
 }
 
 // MONUMENTS MAJORITY
 
 const monumentMajorityEffect = () => (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Monuments majority` }));
-    const { conflict } = getState();
+    const { conflict, board } = getState();
     const { conflicts, activeConflictNumber } = conflict;
     const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);
 
-    // TODO - check if player still has figures in region
+    const { hexes } = board;
+
+    const regionHexes = hexes.flat().filter(hex => hex.region === activeConflictNumber)
+    const figuresInRegion = regionHexes
+        .filter(hex => hex.figureId)
+        .map(({ figureId, playerId }) => ({ figureId, playerId }))
+
+    const monumentsInRegion = regionHexes
+        .filter(hex => hex.monumentId)
+        .map(({ monumentId, playerId }) => ({ monumentId, playerId }))
+
     currentConflict.playersIds.forEach(
         playerId => {
-            const devotion = calculatePlayerDevotionFromRegion(playerId, currentConflict.monumentsInRegion);
+            const playerFiguresAmount = figuresInRegion.filter(figure => figure.playerId === playerId).length;
+            const devotion = playerFiguresAmount === 0 ? 0 : calculatePlayerDevotionFromRegion(playerId, monumentsInRegion);
             console.log(`Player ${playerId} gets ${devotion} devotion from Monuments Majority`);
             dispatch(gameReducer.actions.increasePlayerDevotion({ playerId, amount: devotion }))
         }
@@ -416,10 +495,10 @@ const calculatePlayerDevotionForMonumentType = (playerId, monuments) => {
 
     let highestPlayerMonumentsCount = 0;
     let topPlayer = undefined;
-    Object.entries(counter).forEach(([player, count]) => {
-        if (count > highestPlayerMonumentsCount) {
+    Object.entries(counter).forEach(([player, amount]) => {
+        if (amount > highestPlayerMonumentsCount) {
             topPlayer = player;
-            highestPlayerMonumentsCount = count;
+            highestPlayerMonumentsCount = amount;
         }
     })
 
@@ -437,7 +516,6 @@ export const finishCurrentConflictEffect = () => async (dispatch, getState) => {
         const { conflict: conflict2 } = getState();
         const { conflicts, activeConflictNumber: nextActiveConflictNumber } = conflict2;
         const nextConflict = conflicts.find(conflict => conflict.regionNumber === nextActiveConflictNumber);
-        console.log(conflicts, nextConflict, nextActiveConflictNumber)
         dispatch(resolveConflictEffect({ conflict: nextConflict }))
     }
 }

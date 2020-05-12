@@ -10,15 +10,28 @@ import { summonFigureEffect } from 'GameLogic/actions/summonFigure';
 import { selectFigureToMoveEffect, moveFigureEffect } from 'GameLogic/actions/moveFigures';
 import { controlMonumentEffect } from 'GameLogic/events/controlMonument';
 
+import { BATTLE_ACTION } from 'GameLogic/conflict';
+import { resolvePlaceMonumentEffect } from 'GameLogic/conflicts/resolveConflicts'
+
 const highlightColor = 'salmon';
 const selectingActions = [
     GAME_ACTIONS.summonFigure,
     GAME_ACTIONS.selectFigureToMove,
     GAME_ACTIONS.moveFigure,
     GAME_ACTIONS.selectMonumentToControl,
+    BATTLE_ACTION.BUILD_MONUMENT,
 ]
 
-const dispatchCurrentAction = (dispatch, currentAction, x, y) => {
+const dispatchCurrentAction = (dispatch, currentAction, currentBattleActionId, x, y) => {
+    if (currentBattleActionId) {
+        switch (currentBattleActionId) {
+            case BATTLE_ACTION.BUILD_MONUMENT:
+                dispatch(resolvePlaceMonumentEffect({ x, y }));
+                return;
+            default:
+                return;
+        }
+    }
     switch (currentAction) {
         case GAME_ACTIONS.summonFigure:
             dispatch(summonFigureEffect({ x, y }));
@@ -40,12 +53,13 @@ const dispatchCurrentAction = (dispatch, currentAction, x, y) => {
 const Hex = ({ hexData, columnNumber, hexNumber }) => {
     const dispatch = useDispatch();
     const currentAction = useSelector(({ game }) => game.currentGameAction)
+    const currentBattleActionId = useSelector(({ conflict }) => conflict.currentBattleActionId)
     const players = useSelector(({ game }) => game.players)
     const selectedFigureId = useSelector(({ game }) => game.selectedFigureId)
 
     const playerColor = hexData.playerId ? players[hexData.playerId].god.color : 'grey';
 
-    const isSelecting = selectingActions.includes(currentAction);
+    const isSelecting = selectingActions.includes(currentAction) || selectingActions.includes(currentBattleActionId);
 
     const { areaType } = hexData;
 
@@ -54,7 +68,7 @@ const Hex = ({ hexData, columnNumber, hexNumber }) => {
     const handleMouseOver = () => setHoverColor(highlightColor);
     const handleMouseOut = () => setHoverColor('transparent');
 
-    const handleClick = () => dispatchCurrentAction(dispatch, currentAction, columnNumber, hexNumber);
+    const handleClick = () => dispatchCurrentAction(dispatch, currentAction, currentBattleActionId, columnNumber, hexNumber);
 
     let backgroundColor;
     if (areaType === 'X') {

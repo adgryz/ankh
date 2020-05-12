@@ -17,6 +17,6 @@ const calculateFollowers = (monuments, figures, playerId, hexes) => {
 export const gainFollowersEffect = () => (dispatch, getState) => {
     const { monuments, figures, board: { hexes }, game: { currentPlayerId } } = getState();
     const newFollowers = calculateFollowers(monuments, figures, currentPlayerId, hexes);
-    dispatch(gameReducer.actions.increaseFollowers({ count: newFollowers }));
+    dispatch(gameReducer.actions.increaseFollowers({ amount: newFollowers }));
     dispatch(endActionEffect());
 }

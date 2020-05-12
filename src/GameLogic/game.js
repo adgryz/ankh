@@ -238,27 +238,27 @@ const game = createSlice({
         // FOLLOWERS
         decreaseFollowers: (state, { payload }) => {
             const player = state.players[state.currentPlayerId];
-            player.followers -= payload.count;
+            player.followers -= payload.amount;
         },
         increaseFollowers: (state, { payload }) => {
             const player = state.players[state.currentPlayerId];
-            player.followers += payload.count;
+            player.followers += payload.amount;
         },
         decreasePlayerFollowers: (state, { payload }) => {
-            const { playerId, count } = payload;
+            const { playerId, amount } = payload;
             const player = state.players[playerId];
-            player.followers -= count;
+            player.followers -= amount;
         },
         increasePlayerFollowers: (state, { payload }) => {
-            const { playerId, count } = payload;
+            const { playerId, amount } = payload;
             const player = state.players[playerId];
-            player.followers += count;
+            player.followers += amount;
         },
         // DEVOTION
         decreasePlayerDevotion: (state, { payload }) => {
-            const { playerId, count } = payload;
+            const { playerId, amount } = payload;
             const player = state.players[playerId];
-            player.devotion -= count;
+            player.devotion -= amount;
         },
         increasePlayerDevotion: (state, { payload }) => {
             const { playerId, amount } = payload;
@@ -288,9 +288,9 @@ const game = createSlice({
             state.selectedFigureId = payload.figureId
         },
         // PLAYER MONUMENTS AND FIGURES
-        addMonumentToCurrentPlayer: (state, { payload }) => {
-            const { monumentId } = payload;
-            const playerMonuments = state.players[state.currentPlayerId].monuments;
+        addMonumentToPlayer: (state, { payload }) => {
+            const { monumentId, playerId } = payload;
+            const playerMonuments = state.players[playerId].monuments;
 
             if (monumentId.startsWith('o')) {
                 playerMonuments.obelisksIds.push(monumentId);

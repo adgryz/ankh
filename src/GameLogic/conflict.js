@@ -31,6 +31,10 @@ const getInitialState = () => {
         bidWinnerId: undefined,
         killedFiguresAmounts: {},
         winnerId: undefined,
+        monumentToBeBuilt: {
+            playerId: undefined,
+            monumentType: undefined
+        }
     }
 }
 
@@ -59,6 +63,7 @@ const conflict = createSlice({
             state.bidWinnerId = undefined;
             state.killedFiguresAmounts = {};
             state.winnerId = undefined;
+            state.monumentToBeBuilt = {};
         },
         markTieBreakerUsed: (state) => {
             state.isTieBreakerUsed = true;
@@ -77,6 +82,7 @@ const conflict = createSlice({
             state.currentBattleActionId = undefined;
             state.winnerId = undefined;
             state.activeConflictNumber++;
+            state.monumentToBeBuilt = {};
         },
         setMessage: (state, { payload }) => {
             state.message = payload.message;
@@ -110,6 +116,11 @@ const conflict = createSlice({
             const { playerId, regionNumber, amount } = payload;
             const conflict = state.conflicts.find(conflict => conflict.regionNumber === regionNumber);
             conflict.playersStrengths[playerId] += amount;
+        },
+        // BUILD MONUMENT 
+        setMonumentToBeBuilt: (state, { payload }) => {
+            const { playerId, monumentType } = payload;
+            state.monumentToBeBuilt = { playerId, monumentType };
         },
         // BIDS
         setPlayerBid: (state, { payload }) => {

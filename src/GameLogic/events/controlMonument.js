@@ -10,7 +10,7 @@ export const controlMonumentEffect = ({ x, y }) => (dispatch, getState) => {
     // TODO: Check if there are any neutral(or enemy) monuments adjacent to player figures, if not => end turn immediately
     const { game, monuments, board: { hexes }, figures } = getState();
     const selectedMonumentId = hexes[x][y].monumentId;
-    const playerId = game.players[game.currentPlayerId].id;
+    const playerId = game.currentPlayerId;
 
     if (!selectedMonumentId) {
         alert('Select monument');
@@ -51,6 +51,6 @@ export const controlMonumentEffect = ({ x, y }) => (dispatch, getState) => {
 
 export const addMonumentToPlayerEffect = ({ x, y, playerId, monumentId }) => (dispatch, getState) => {
     dispatch(boardReducer.actions.changeMonumentOwner({ x, y, playerId }));
-    dispatch(gameReducer.actions.addMonumentToCurrentPlayer({ monumentId }));
+    dispatch(gameReducer.actions.addMonumentToPlayer({ monumentId, playerId }));
     dispatch(monumentsReducer.actions.setMonumentPlayer({ monumentId, playerId }))
 }
