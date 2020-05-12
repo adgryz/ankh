@@ -1,11 +1,11 @@
 export const levelOnePowers = [
     {
-        name: 'Comanding',
+        name: 'Commanding',
         description: 'Win Battle => Gain 3 followers',
     },
     {
         name: 'Inspiring',
-        description: 'Sacrafice max 3 follower during build',
+        description: 'Sacrifice max 3 follower during build',
     },
     {
         name: 'Bountiful',

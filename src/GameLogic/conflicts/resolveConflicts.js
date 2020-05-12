@@ -329,7 +329,18 @@ export const resolveSelectMonumentToBuildEffect = ({ monumentType }) => (dispatc
     const templeCost = 2 + 2 * monuments.templesIds.length;
     const pyramidCost = 2 + 2 * monuments.pyramidsIds.length;
 
-    const cost = monumentType === 'o' ? obeliskCost : monumentType === 't' ? templeCost : pyramidCost;
+    const hasInspiringPower = game.players[playerId].god.unlockedPowers.includes('Inspiring');
+
+    let cost;
+    if (hasInspiringPower) {
+        cost = monumentType === 'o'
+            ? Math.min(obeliskCost, 3)
+            : monumentType === 't'
+                ? Math.min(templeCost, 3)
+                : Math.min(pyramidCost, 3);
+    } else {
+        cost = monumentType === 'o' ? obeliskCost : monumentType === 't' ? templeCost : pyramidCost;
+    }
 
     if (cost > followers) {
         alert(`You don't have enough followers`);
@@ -413,7 +424,8 @@ const monumentMajorityEffect = () => (dispatch, getState) => {
     dispatch(resolveBattleResult());
 }
 
-// TIE BREAKER
+// BATTLE RESOLUTION 
+
 
 const resolveBattleResult = () => async (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Battle result` }));
@@ -452,6 +464,9 @@ const resolveBattleResult = () => async (dispatch, getState) => {
     dispatch(afterBattleResolutionEffect());
 }
 
+// TIE BREAKER
+
+
 export const denyTieBreakerUseEffect = () => async (dispatch, getState) => {
     dispatch(resolveNoBattleWinnerEffect());
     dispatch(afterBattleResolutionEffect());
@@ -478,10 +493,10 @@ const resolveNoBattleWinnerEffect = () => async (dispatch, getState) => {
 }
 
 const resolveBattleWinnerEffect = ({ winnerId }) => async (dispatch, getState) => {
-    const { conflict } = getState();
+    const { conflict, game: { players } } = getState();
     const { conflicts, activeConflictNumber } = conflict;
     const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);;
-    const { playersIds } = currentConflict
+    const { playersIds, playersStrengths } = currentConflict
 
     dispatch(conflictReducer.actions.setWinnerId({ playerId: winnerId }))
     await sleep(2000);
@@ -492,9 +507,26 @@ const resolveBattleWinnerEffect = ({ winnerId }) => async (dispatch, getState) =
         .filter(figure => figure.playerId !== winnerId);
     dispatch(killFiguresEffect({ playersIds, figures }));
 
-    dispatch(gameReducer.actions.increasePlayerDevotion({ playerId: winnerId, amount: 1 }))
+    const winnerPowers = players[winnerId].god.unlockedPowers;
+    let extraDevotion = 0;
 
-    console.log(`Player ${winnerId} gets 1 devotion from winning the battle`);
+    if (winnerPowers.includes('Commanding')) {
+        dispatch(gameReducer.actions.increasePlayerFollowers({ playerId: winnerId, amount: 3 }))
+        console.log(`Player ${winnerId} gets 3 followers from Commanding power`);
+    }
+    if (winnerPowers.includes('Glorious')) {
+        const sortedStrengths = playersStrengths.map(([playerId, str]) => str).sort((s1, s2) => s2 - s1);
+        const winnerStr = sortedStrengths[0];
+        const secondStr = sortedStrengths[1];
+        if (winnerStr >= secondStr + 2) {
+            extraDevotion++;
+        }
+    }
+
+    const devotionAmount = 1 + extraDevotion;
+    dispatch(gameReducer.actions.increasePlayerDevotion({ playerId: winnerId, amount: devotionAmount }))
+
+    console.log(`Player ${winnerId} gets ${devotionAmount} devotion from winning the battle`);
 }
 
 const afterBattleResolutionEffect = () => async (dispatch, getState) => {
@@ -540,9 +572,9 @@ const calculatePlayerDevotionFromRegion = (playerId, monumentsInRegion) => {
 }
 
 const calculatePlayerDevotionForMonumentType = (playerId, monuments) => {
-    const playerIds = [...(new Set(monuments.map(({ playerId }) => playerId)))];
+    const playersIds = [...(new Set(monuments.map(({ playerId }) => playerId)))].filter(id => !!id);
     const counter = {}
-    playerIds.forEach(id => counter[id] = 0);
+    playersIds.forEach(id => counter[id] = 0);
     monuments.forEach(({ playerId }) => counter[playerId]++);
 
     let highestPlayerMonumentsCount = 0;

@@ -13,13 +13,20 @@ const MonumentsSelection = () => {
     const { monumentType: selectedMonumentType } = useSelector(({ conflict }) => conflict.monumentToBeBuilt);
     const [playerId, ...rest] = useSelector(({ conflict }) => conflict.beforeBattleCards[0]);
     const { monuments } = useSelector(({ game }) => game.players[playerId]);
+    const hasInspiringPower = useSelector(({ game }) => game.players[playerId].god.unlockedPowers.includes('Inspiring'));
 
     const obeliskCost = 2 + 2 * monuments.obelisksIds.length;
     const templeCost = 2 + 2 * monuments.templesIds.length;
     const pyramidCost = 2 + 2 * monuments.pyramidsIds.length;
 
     const monumentsTypes = ['o', 't', 'p'];
-    const costs = [obeliskCost, templeCost, pyramidCost];
+    const costs = hasInspiringPower
+        ? [
+            Math.min(obeliskCost, 3),
+            Math.min(templeCost, 3),
+            Math.min(pyramidCost, 3)
+        ]
+        : [obeliskCost, templeCost, pyramidCost];
 
     const handleSelection = (monumentType) => () => dispatch(resolveSelectMonumentToBuildEffect({ monumentType }));
     const handleCancel = () => dispatch(cancelBuildMonumentEffect());
