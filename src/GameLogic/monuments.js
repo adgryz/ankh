@@ -8,10 +8,10 @@ const getInitialState = () => {
             o3: { id: 'o3', x: 8, y: 9 }
         },
         temples: {
-            t1: { id: 't1', playerId: 'p1', x: 8, y: 2 },
-            t2: { id: 't2', playerId: 'p1', x: 6, y: 3 },
-            t3: { id: 't3', playerId: 'p1', x: 5, y: 4 },
-            t4: { id: 't4', playerId: 'p1', x: 6, y: 7 },
+            t1: { id: 't1', x: 8, y: 2 },
+            t2: { id: 't2', x: 6, y: 3 },
+            t3: { id: 't3', x: 5, y: 4 },
+            t4: { id: 't4', x: 6, y: 7 },
         },
         pyramids: {
             p1: { id: 'p1', playerId: 'p2', x: 3, y: 1 },

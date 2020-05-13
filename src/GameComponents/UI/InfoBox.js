@@ -7,6 +7,7 @@ import gameReducer, { getMessageForGameAction, isDuringAction, GAME_ACTIONS, isE
 import { endActionEffect } from 'GameLogic/actions/actions';
 import { endEventEffect } from 'GameLogic/events/events';
 import { resolveWorshipfulEffect } from 'GameLogic/ankhPowers/worshipful';
+import { resolveSplendiferousEffect } from 'GameLogic/ankhPowers/splendiferous';
 
 const InfoBox = () => {
     const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const InfoBox = () => {
     const currentPlayer = players[currentPlayerId];
 
     const endTurn = () => {
+        dispatch(resolveSplendiferousEffect());
         dispatch(resolveWorshipfulEffect());
         dispatch(gameReducer.actions.endTurn());
     }

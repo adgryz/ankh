@@ -3,6 +3,7 @@ import { ACTIONS_IDS } from './const'
 import { gainFollowersEffect } from './gainFollowers';
 import { resolveCurrentEventEffect } from 'GameLogic/events/events';
 import { resolveWorshipfulEffect } from 'GameLogic/ankhPowers/worshipful';
+import { resolveSplendiferousEffect } from 'GameLogic/ankhPowers/splendiferous';
 
 export const selectActionEffect = ({ actionId }) => (dispatch, getState) => {
     dispatch(gameReducer.actions.setCurrentActionId({ actionId }))
@@ -48,6 +49,7 @@ export const endActionEffect = () => (dispatch, getState) => {
     // Action reached max index
     if (nextGame.actions[actionId].index === nextGame.actions[actionId].maxIndex) {
         dispatch(gameReducer.actions.moveEventIndex());
+        dispatch(resolveSplendiferousEffect());
         dispatch(resolveWorshipfulEffect());
         dispatch(resolveCurrentEventEffect());
         return;
@@ -55,6 +57,7 @@ export const endActionEffect = () => (dispatch, getState) => {
 
     // Played 2 actions
     if (nextGame.playedActions === 2) {
+        dispatch(resolveSplendiferousEffect());
         dispatch(resolveWorshipfulEffect());
         dispatch(gameReducer.actions.endTurn());
         return;
@@ -62,6 +65,7 @@ export const endActionEffect = () => (dispatch, getState) => {
 
     // Played Ankh action
     if (actionId === ACTIONS_IDS.ANKH) {
+        dispatch(resolveSplendiferousEffect());
         dispatch(resolveWorshipfulEffect());
         dispatch(gameReducer.actions.endTurn());
         return;
