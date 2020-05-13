@@ -1,6 +1,7 @@
 import gameReducer from 'GameLogic/game';
 import figuresReducer from 'GameLogic/figures';
 import { endActionEffect } from 'GameLogic/actions/actions';
+import { unlockSentinelEffect } from 'GameLogic/sentinels/sentinels';
 
 export const unlockAnkhPowerEffect = ({ powerName, powerLevel }) => (dispatch, getState) => {
     const { game: { currentPlayerId } } = getState();
@@ -11,7 +12,27 @@ export const unlockAnkhPowerEffect = ({ powerName, powerLevel }) => (dispatch, g
         dispatch(resolveTempleAttunedEffect())
     }
 
+    const { game: newGame } = getState();
+    const powersAmount = newGame.players[currentPlayerId].god.unlockedPowers.length;
+    if (isUnlockingSentinel(powersAmount)) {
+        dispatch(unlockSentinelEffect({ level: getSentinelLevel(powersAmount) }))
+    }
+
     dispatch(endActionEffect());
+}
+
+const isUnlockingSentinel = (powersAmount) => [2, 4, 5].includes(powersAmount);
+const getSentinelLevel = (powersAmount) => {
+    switch (powersAmount) {
+        case 2:
+            return 1;
+        case 4:
+            return 2;
+        case 5:
+            return 3;
+        default:
+            return 1;
+    }
 }
 
 const resolveTempleAttunedEffect = () => (dispatch, getState) => {

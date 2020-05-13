@@ -9,7 +9,7 @@ import ConflictsBoard from './GameComponents/ConflictsBoard/ConflictsBoard';
 import GodBoards from './GameComponents/GodBoards/GodBoards';
 import InfoBox from './GameComponents/UI/InfoBox';
 
-import GuardianCards from './GameComponents/GuardianCards/GuardianCards';
+import SentinelCards from './GameComponents/SentinelCards/SentinelCards';
 import { initializeFiguresAndMonumentsOnBoardEffect } from './GameLogic/board';
 import { initializePlayerFiguresAndMonumentsEffect } from './GameLogic/game';
 
@@ -48,7 +48,7 @@ function App() {
           }
           <DevotionBoard devotion={devotion} />
         </div>
-        <GuardianCards />
+        <SentinelCards />
       </div>
 
       <div>

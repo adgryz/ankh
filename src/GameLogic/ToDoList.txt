@@ -1,8 +1,8 @@
 TO DO LIST:
 [✔] Resplendent
-[] Obelisk Attuned
+[✔] Obelisk Attuned
 ---
-[] Get guardian
+[✔] Get guardian
 [] Cat mummy
 [] Mummy
 [] Androsphinx

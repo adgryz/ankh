@@ -15,6 +15,11 @@ const Figure = ({ figureId }) => {
 };
 
 const getFigureImg = (players, figureId) => {
+    if (figureId.startsWith('s')) {
+        const [prefix, sentinelName, sufix] = figureId.split('_');
+        return require(`./figures/${sentinelName}.png`)
+    }
+
     const playerId = 'p' + figureId[1];
     const playerGodName = players[playerId].god.name;
     if (figureId.startsWith('g')) {
@@ -22,9 +27,6 @@ const getFigureImg = (players, figureId) => {
     }
     if (figureId.startsWith('w')) {
         return require(`./figures/${playerGodName}Warrior.png`)
-    }
-    if (figureId.startsWith('s')) {
-        return null;
     }
 }
 

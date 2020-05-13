@@ -61,11 +61,12 @@ export const summonFigureEffect = ({ x, y, }) => (dispatch, getState) => {
 
     dispatch(gameReducer.actions.removeFigureFromPool({ figureId }));
     dispatch(figuresReducer.actions.addFigure({ figureId, playerId: game.currentPlayerId, x, y }));
+    dispatch(gameReducer.actions.addFigureIdToPlayerFiguresIds({ figureId, playerId: game.currentPlayerId }))
     dispatch(boardReducer.actions.setFigures({ figures: [{ id: figureId, x, y, playerId }] }))
 
     if (hasPyramidAttuned) {
         // set adjacent pyramids data
-        dispatch(gameReducer.actions.addFigureToSummonedFiguresPA({ adjacentPyramids }))
+        dispatch(gameReducer.actions.addFigureToSummonedFiguresAdjacentPyramids({ adjacentPyramids }))
         dispatch(gameReducer.actions.setCurrentActionId({ actionId: ACTIONS_IDS.SUMMON }))
 
         const { game: newGame } = getState();

@@ -13,7 +13,10 @@ const getInitialState = () => {
             w22: { id: 'w22', playerId: 'p2', x: 5, y: 5, strength: 1 },
         },
         sentinels: {
-
+            s_catMummy_1: { id: 's_catMummy_1', strength: 1, level: 1 },
+            s_mummy_1: { id: 's_mummy_1', strength: 1, level: 2 },
+            s_androsphinx_1: { id: 's_androsphinx_1', strength: 1, level: 3 },
+            // TODO count of guardians should be done based on players count
         }
     }
 }
@@ -60,6 +63,11 @@ const figures = createSlice({
             if (figureId[0] !== 'g') {
                 delete state[getName(figureId[0])][figureId]
             }
+        },
+        giveSentinelToPlayer: (state, { payload }) => {
+            const { sentinelId, playerId } = payload;
+            console.log(state.sentinels, sentinelId)
+            state.sentinels[sentinelId].playerId = playerId;
         }
     },
 })

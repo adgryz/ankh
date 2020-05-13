@@ -599,6 +599,7 @@ const killFigureEffect = ({ figureId, playerId }) => (dispatch, getState) => {
         dispatch(figuresReducer.actions.killFigure({ figureId }))
         dispatch(gameReducer.actions.addFigureToPlayerPool({ playerId, figureId }))
         dispatch(conflictReducer.actions.removeFigureFromConflicts({ figureId, playerId, strength: figure.strength }))
+        dispatch(gameReducer.actions.removeFigureIdFromPlayerFiguresIds({ figureId, playerId }))
     }
 }
 

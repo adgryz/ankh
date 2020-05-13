@@ -181,6 +181,19 @@ export const isEventAction = currentGameActionId => {
         GAME_ACTIONS.selectRegionToSwapNumbers].includes(currentGameActionId)
 }
 
+const getName = char => {
+    switch (char) {
+        case 'g':
+            return 'godsIds'
+        case 'w':
+            return 'warriorsIds'
+        case 's':
+            return 'sentinelsIds'
+        default:
+            throw new Error('sth went wrong')
+    }
+}
+
 const game = createSlice({
     name: 'game',
     initialState: getInitialState(),
@@ -259,8 +272,20 @@ const game = createSlice({
             player.devotion += amount;
         },
         // SUMMON 
-        addFigureToSummonedFiguresPA: (state, { payload }) => {
+        addFigureToSummonedFiguresAdjacentPyramids: (state, { payload }) => {
             state.summonedFiguresAdjacentPyramids.push(payload.adjacentPyramids);
+        },
+        addFigureIdToPlayerFiguresIds: (state, { payload }) => {
+            const { figureId, playerId } = payload;
+            state.players[playerId].figures[getName(figureId[0])].push(figureId)
+        },
+        removeFigureIdFromPlayerFiguresIds: (state, { payload }) => {
+            const { figureId, playerId } = payload;
+            const figuresGroup = state.players[playerId].figures[getName(figureId[0])];
+            const figureIndex = figuresGroup.findIndex(f => f === figureId)
+            if (figureIndex > -1) {
+                figuresGroup.splice(figureIndex, 1)
+            }
         },
         // POOL
         setSelectedFigureFromPool: (state, { payload }) => {

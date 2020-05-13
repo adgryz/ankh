@@ -10,8 +10,8 @@ export const getNeutralMonuments = ({ obelisks, temples, pyramids }) => {
 
 export const getPlayerAndNeutralMonuments = (monuments, playerId) => [...getPlayerMonuments(monuments, playerId), ...getNeutralMonuments(monuments)]
 
-export const getPlayerFigures = ({ gods, warriors }, playerId) => {
-    return [...Object.values(gods), ...Object.values(warriors)]
+export const getPlayerFigures = ({ gods, warriors, sentinels }, playerId) => {
+    return [...Object.values(gods), ...Object.values(warriors), ...Object.values(sentinels)]
         .filter(x => x.playerId === playerId)
 }
 
