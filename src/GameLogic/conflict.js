@@ -11,7 +11,10 @@ export const BATTLE_ACTION = {
     BUILD_MONUMENT: 'BUILD_MONUMENT',
 
     RESOLVE_BATTLE: 'RESOLVE_BATTLE',
-    TIE_BREAKER_QUESTION: 'TIE_BREAKER_QUESTION'
+    TIE_BREAKER_QUESTION: 'TIE_BREAKER_QUESTION',
+
+    OBELISK_ATTUNED_SELECT_FIGURE: 'OBELISK_ATTUNED_SELECT_FIGURE',
+    OBELISK_ATTUNED_PLACE_FIGURE: 'OBELISK_ATTUNED_PLACE_FIGURE'
 }
 
 const getInitialState = () => {
@@ -35,7 +38,8 @@ const getInitialState = () => {
         monumentToBeBuilt: {
             playerId: undefined,
             monumentType: undefined
-        }
+        },
+        obeliskAttunedPlayerId: undefined,
     }
 }
 
@@ -68,6 +72,7 @@ const conflict = createSlice({
             state.killedFiguresAmounts = {};
             state.winnerId = undefined;
             state.monumentToBeBuilt = {};
+            state.obeliskAttunedPlayerId = undefined;
         },
         markTieBreakerUsed: (state) => {
             state.isTieBreakerUsed = true;
@@ -87,6 +92,7 @@ const conflict = createSlice({
             state.winnerId = undefined;
             state.activeConflictNumber++;
             state.monumentToBeBuilt = {};
+            state.obeliskAttunedPlayerId = undefined;
         },
         setMessage: (state, { payload }) => {
             state.message = payload.message;
@@ -156,6 +162,10 @@ const conflict = createSlice({
                 }
             })
 
+        },
+        // OBELISK ATTUNED
+        setObeliskAttunedPlayerId: (state, { payload }) => {
+            state.obeliskAttunedPlayerId = payload.playerId;
         }
     },
 })

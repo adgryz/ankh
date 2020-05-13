@@ -12,6 +12,7 @@ import BattleResults from './BattleResults/BattleResults';
 import MonumentsSelection from './MonumentSelection/MonumentSelection';
 import TieBreakerQuestion from './TieBreakerQuestion/TieBreakerQuestion';
 import { BATTLE_CARD } from 'GameLogic/conflicts/const';
+import ObeliskAttuned from './ObeliskAttuned/ObeliskAttuned';
 
 
 const ConflictsBoard = () => {
@@ -64,6 +65,10 @@ const ConflictsBoard = () => {
             }
             {
                 actionId === BATTLE_ACTION.TIE_BREAKER_QUESTION && <TieBreakerQuestion />
+            }
+            {
+                (actionId === BATTLE_ACTION.OBELISK_ATTUNED_SELECT_FIGURE || actionId === BATTLE_ACTION.OBELISK_ATTUNED_PLACE_FIGURE)
+                && <ObeliskAttuned />
             }
         </div>
     )

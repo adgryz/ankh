@@ -1,0 +1,27 @@
+.obeliskAttuned {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
+
+    .info {
+        font-weight: bold;
+        color: brown;
+        text-align: center;
+    }
+
+    .instruction {
+        color: brown;
+        margin-top: 10px;
+    }
+
+    .finish {
+        margin-top: 20px;
+        font-weight: bold;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: brown;
+        cursor: pointer;
+        color: burlywood;
+    }
+}

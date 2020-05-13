@@ -1,5 +1,5 @@
 TO DO LIST:
-[] Resplendent
+[✔] Resplendent
 [] Obelisk Attuned
 ---
 [] Get guardian
@@ -11,3 +11,5 @@ TO DO LIST:
 [] Ra power
 ---
 [] Player elimination
+[] Correct devotion order
+[] Refactor

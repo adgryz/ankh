@@ -29,7 +29,7 @@ const getColor = (colorCode) => {
         case 'BATTLE':
             return 'red';
         case 'START':
-            return 'yellow';
+            return 'burlywood';
         case 'RIVER':
             return 'lightblue';
         case 'CONTROL':

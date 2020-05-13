@@ -10,7 +10,7 @@ const ActionBoardField = ({ isActive, isEventActivator, label, color }) => {
     const style = isActive || !isEventActivator ? null : { filter: 'invert(1)' };
     return <div className="actionField" style={{
         border: `3px solid ${color}`,
-        background: isActive ? 'yellow' : isEventActivator ? 'black' : 'white'
+        background: isActive ? 'burlywood' : isEventActivator ? 'black' : 'white'
     }}>
         {color === 'blue' && <img src={chariot} width={18} height={18} alt="img" style={style} />}
         {color === 'red' && <img src={warrior} width={18} height={18} alt="img" style={style} />}

@@ -5,6 +5,7 @@ import figuresReducer from 'GameLogic/figures'
 import monumentsReducer from 'GameLogic/monuments'
 import { resolveResplendentEffect } from 'GameLogic/ankhPowers/resplendent';
 import { endEventEffect } from 'GameLogic/events/events';
+import { resolveObeliskAttunedEffect } from 'GameLogic/ankhPowers/obeliskAttuned';
 
 import { getConflicts, getPlayerFiguresFromConflict, CONFLICT_TYPE } from './getConflicts'
 import { BATTLE_CARD } from './const';
@@ -16,7 +17,7 @@ export const resolveConflictsEffect = () => (dispatch, getState) => {
     dispatch(resolveConflictEffect({ conflict: conflicts[0] }))
 }
 
-export const resolveConflictEffect = ({ conflict }) => (dispatch, getState) => {
+export const resolveConflictEffect = ({ conflict }) => async (dispatch, getState) => {
     const { conflictType, regionNumber, playerId, monumentsInRegion, playersIds } = conflict;
     if (conflictType === CONFLICT_TYPE.NO_BATTLE) {
         dispatch(conflictReducer.actions.setMessage({ message: `No battle in region ${regionNumber}` }));
@@ -38,17 +39,16 @@ export const resolveConflictEffect = ({ conflict }) => (dispatch, getState) => {
     if (conflictType === CONFLICT_TYPE.BATTLE) {
         dispatch(conflictReducer.actions.setMessage({ message: `Battle in region ${regionNumber}` }));
         dispatch(conflictReducer.actions.setCurrentPlayerId({ playerId: playersIds[0] }));
-        sleep(1000).then(() => dispatch(selectBattleCardEffect()))
-
-        // 3 resolve other cards
-        // 4 monuments majority
-        // 5 battle resolution
+        await sleep(1000);
+        // TODO: sort playerIds by devotion
+        dispatch(resolveObeliskAttunedEffect({ playerId: playersIds[0] })); // starts with 1st player goes to next players
+        // selectBattleCardEffect is resolved after last player resolveObeliskAttunedEffect
         return;
     }
 
 }
 
-const selectBattleCardEffect = () => (dispatch, getState) => {
+export const selectBattleCardEffect = () => (dispatch, getState) => {
     const { conflict } = getState();
     const { currentPlayerId } = conflict;
     dispatch(conflictReducer.actions.setMessage({ message: `${currentPlayerId} choose battle card` }));
