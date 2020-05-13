@@ -89,7 +89,7 @@ const initialPlayerState = {
 }
 const getInitialState = () => {
     return {
-        playerIds: ['p1', 'p2'],
+        playersIds: ['p1', 'p2'],
         players: {
             p1: {
                 id: 'p1',
@@ -127,7 +127,7 @@ const getInitialState = () => {
             [ACTIONS_IDS.FOLLOWERS]: {
                 id: ACTIONS_IDS.FOLLOWERS,
                 startingIndex: 3,
-                index: 5,
+                index: 3,
                 maxIndex: 6,
                 order: 3,
             },
@@ -149,11 +149,11 @@ const getInitialState = () => {
 
 export const initializePlayerFiguresAndMonumentsEffect = () => (dispatch, getState) => {
     const { figures, game: gameState, monuments } = getState();
-    const { playerIds } = gameState;
+    const { playersIds } = gameState;
     const { gods, warriors } = figures;
     const { obelisks, pyramids, temples } = monuments;
 
-    playerIds.forEach(playerId => {
+    playersIds.forEach(playerId => {
         const godsIds = getPlayerObjectIds(gods, playerId);
         const warriorsIds = getPlayerObjectIds(warriors, playerId);
         const obelisksIds = getPlayerObjectIds(obelisks, playerId);
@@ -187,8 +187,8 @@ const game = createSlice({
     reducers: {
         // UI
         endTurn: (state) => {
-            const currentPlayerIdIndex = state.playerIds.findIndex(id => id === state.currentPlayerId);
-            state.currentPlayerId = state.playerIds[(currentPlayerIdIndex + 1) % state.playerIds.length];
+            const currentPlayerIdIndex = state.playersIds.findIndex(id => id === state.currentPlayerId);
+            state.currentPlayerId = state.playersIds[(currentPlayerIdIndex + 1) % state.playersIds.length];
             state.currentGameAction = GAME_ACTIONS.selectAction;
             state.currentActionId = null;
             state.playedActions = 0;

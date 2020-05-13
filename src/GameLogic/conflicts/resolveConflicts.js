@@ -18,34 +18,45 @@ export const resolveConflictsEffect = () => (dispatch, getState) => {
 }
 
 export const resolveConflictEffect = ({ conflict }) => async (dispatch, getState) => {
-    const { conflictType, regionNumber, playerId, monumentsInRegion, playersIds } = conflict;
+    const { game } = getState();
+    const { conflictType, regionNumber } = conflict;
+
     if (conflictType === CONFLICT_TYPE.NO_BATTLE) {
         dispatch(conflictReducer.actions.setMessage({ message: `No battle in region ${regionNumber}` }));
-        console.log('No battle')
-        dispatch(finishCurrentConflictEffect())
+        dispatch(resolveObeliskAttunedEffect({ playerId: game.playersIds[0] }));
+        // finishCurrentConflictEffect is resolved after last player resolveObeliskAttunedEffect
         return;
     }
 
     if (conflictType === CONFLICT_TYPE.DOMINATION) {
         dispatch(conflictReducer.actions.setMessage({ message: `Domination in region ${regionNumber}` }));
-        const devotionAmount = 1 + calculatePlayerDevotionFromRegion(playerId, monumentsInRegion);
-        dispatch(gameReducer.actions.increasePlayerDevotion({ playerId, amount: devotionAmount }))
-        console.log(`Player ${playerId} get ${devotionAmount} devotion from domination`)
-        dispatch(finishCurrentConflictEffect())
+        dispatch(resolveObeliskAttunedEffect({ playerId: game.playersIds[0] }));
+        // resolveDominationEffect is resolved after last player resolveObeliskAttunedEffect
         return;
     }
 
 
     if (conflictType === CONFLICT_TYPE.BATTLE) {
         dispatch(conflictReducer.actions.setMessage({ message: `Battle in region ${regionNumber}` }));
-        dispatch(conflictReducer.actions.setCurrentPlayerId({ playerId: playersIds[0] }));
         await sleep(1000);
-        // TODO: sort playerIds by devotion
-        dispatch(resolveObeliskAttunedEffect({ playerId: playersIds[0] })); // starts with 1st player goes to next players
+        // TODO: sort playersIds by devotion
+        dispatch(resolveObeliskAttunedEffect({ playerId: game.playersIds[0] })); // starts with 1st player goes to next players
         // selectBattleCardEffect is resolved after last player resolveObeliskAttunedEffect
         return;
     }
 
+}
+
+export const resolveDominationEffect = () => (dispatch, getState) => {
+    const { game, conflict: { conflicts, activeConflictNumber } } = getState();
+    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber)
+    const { playerId, monumentsInRegion } = currentConflict;
+
+    const devotionAmount = 1 + calculatePlayerDevotionFromRegion(playerId, monumentsInRegion);
+    dispatch(gameReducer.actions.increasePlayerDevotion({ playerId, amount: devotionAmount }))
+    console.log(`Player ${playerId} get ${devotionAmount} devotion from domination`)
+    dispatch(resolveObeliskAttunedEffect({ playerId: game.playersIds[0] }));
+    dispatch(finishCurrentConflictEffect());
 }
 
 export const selectBattleCardEffect = () => (dispatch, getState) => {
@@ -65,14 +76,14 @@ export const playBattleCardEffect = ({ card }) => (dispatch, getState) => {
     else if (card === BATTLE_CARD.miracle) {
         dispatch(conflictReducer.actions.addMiraclePlayerId({ playerId: currentPlayerId }))
     } else {
-        const playerIdsByDevotion = Object.values(game.players)
+        const playersIdsByDevotion = Object.values(game.players)
             .sort((p1, p2) => p1.devotion - p2.devotion)
             .map(({ id }) => id)
 
         const newBeforeBattleCards = [...beforeBattleCards, [currentPlayerId, card]]
         const newBeforeBattleCardsSortedByDevotion = newBeforeBattleCards
             .sort(([p1, c1], [p2, c2]) =>
-                playerIdsByDevotion.findIndex(id => id === p1) - playerIdsByDevotion.findIndex(id => id === p2)
+                playersIdsByDevotion.findIndex(id => id === p1) - playersIdsByDevotion.findIndex(id => id === p2)
             );
         dispatch(conflictReducer.actions.setBeforeBattleCards({ battleCards: newBeforeBattleCardsSortedByDevotion }))
     }

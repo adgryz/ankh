@@ -12,6 +12,10 @@ import { controlMonumentEffect } from 'GameLogic/events/controlMonument';
 
 import { BATTLE_ACTION } from 'GameLogic/conflict';
 import { resolvePlaceMonumentEffect } from 'GameLogic/conflicts/resolveConflicts'
+import {
+    selectFigureToMoveDuringObeliskAttunedffect,
+    moveFigureDuringObeliskAttunedEffect
+} from 'GameLogic/ankhPowers/obeliskAttuned';
 
 const highlightColor = 'salmon';
 const selectingActions = [
@@ -20,6 +24,8 @@ const selectingActions = [
     GAME_ACTIONS.moveFigure,
     GAME_ACTIONS.selectMonumentToControl,
     BATTLE_ACTION.BUILD_MONUMENT,
+    BATTLE_ACTION.OBELISK_ATTUNED_SELECT_FIGURE,
+    BATTLE_ACTION.OBELISK_ATTUNED_PLACE_FIGURE,
 ]
 
 const dispatchCurrentAction = (dispatch, currentAction, currentBattleActionId, x, y) => {
@@ -27,6 +33,12 @@ const dispatchCurrentAction = (dispatch, currentAction, currentBattleActionId, x
         switch (currentBattleActionId) {
             case BATTLE_ACTION.BUILD_MONUMENT:
                 dispatch(resolvePlaceMonumentEffect({ x, y }));
+                return;
+            case BATTLE_ACTION.OBELISK_ATTUNED_SELECT_FIGURE:
+                dispatch(selectFigureToMoveDuringObeliskAttunedffect({ x, y }));
+                return;
+            case BATTLE_ACTION.OBELISK_ATTUNED_PLACE_FIGURE:
+                dispatch(moveFigureDuringObeliskAttunedEffect({ x, y }));
                 return;
             default:
                 return;
@@ -56,6 +68,7 @@ const Hex = ({ hexData, columnNumber, hexNumber }) => {
     const currentBattleActionId = useSelector(({ conflict }) => conflict.currentBattleActionId)
     const players = useSelector(({ game }) => game.players)
     const selectedFigureId = useSelector(({ game }) => game.selectedFigureId)
+    const obeliskAttunedSelectedFigureId = useSelector(({ conflict }) => conflict.obeliskAttunedSelectedFigureId)
 
     const playerColor = hexData.playerId ? players[hexData.playerId].god.color : 'grey';
 
@@ -74,13 +87,14 @@ const Hex = ({ hexData, columnNumber, hexNumber }) => {
     if (areaType === 'X') {
         backgroundColor = 'transparent';
     } else {
-        // backgroundColor = '#' + 3 * hexData.region + 3 * hexData.region + 3 * hexData.region;
         backgroundColor = getColor(areaType);
     }
 
     let overlayColor;
     if (!!selectedFigureId && selectedFigureId === hexData.figureId) {
         overlayColor = highlightColor;
+    } else if (!!obeliskAttunedSelectedFigureId && obeliskAttunedSelectedFigureId === hexData.figureId) {
+        overlayColor = highlightColor
     } else if (hexData.isPreview) {
         overlayColor = highlightColor
     } else if (isSelecting) {
@@ -103,7 +117,6 @@ const Hex = ({ hexData, columnNumber, hexNumber }) => {
             onMouseOut={handleMouseOut}
             onClick={handleClick}
             style={hexStyles} >
-            {/* {columnNumber + ',' + hexNumber} */}
             {
                 (hexData.figureId || hexData.monumentId) &&
                 <div className="token" style={{ borderColor: playerColor }}>

@@ -1,7 +1,7 @@
 export const eventBoardConfig = [
     'START',
 
-    'BATTLE',
+    'CONTROL',
     'CONTROL',
     'CONTROL',
     'BATTLE',
