@@ -127,7 +127,7 @@ const getInitialState = () => {
             [ACTIONS_IDS.FOLLOWERS]: {
                 id: ACTIONS_IDS.FOLLOWERS,
                 startingIndex: 3,
-                index: 3,
+                index: 5,
                 maxIndex: 6,
                 order: 3,
             },

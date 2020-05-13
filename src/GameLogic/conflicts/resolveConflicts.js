@@ -3,9 +3,10 @@ import gameReducer from 'GameLogic/game'
 import boardReducer from 'GameLogic/board'
 import figuresReducer from 'GameLogic/figures'
 import monumentsReducer from 'GameLogic/monuments'
+import { resolveResplendentEffect } from 'GameLogic/ankhPowers/resplendent';
+import { endEventEffect } from 'GameLogic/events/events';
 
 import { getConflicts, getPlayerFiguresFromConflict, CONFLICT_TYPE } from './getConflicts'
-import { endEventEffect } from 'GameLogic/events/events';
 import { BATTLE_CARD } from './const';
 
 export const resolveConflictsEffect = () => (dispatch, getState) => {
@@ -442,15 +443,14 @@ const monumentMajorityEffect = () => (dispatch, getState) => {
 
 // BATTLE RESOLUTION 
 
-
 const resolveBattleResult = () => async (dispatch, getState) => {
     dispatch(conflictReducer.actions.setMessage({ message: `Battle result` }));
     dispatch(conflictReducer.actions.setCurrentBattleActionId({ actionId: BATTLE_ACTION.RESOLVE_BATTLE }));
+    dispatch(resolveResplendentEffect());
 
     const { conflict } = getState();
     const { conflicts, activeConflictNumber, isTieBreakerUsed, tieBreakerOwnerId } = conflict;
-
-    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);;
+    const currentConflict = conflicts.find(conflict => conflict.regionNumber === activeConflictNumber);
     const { playersStrengths } = currentConflict
 
     let winnersIds = [];
@@ -545,7 +545,6 @@ const resolveBattleWinnerEffect = ({ winnerId }) => async (dispatch, getState) =
         if (winnerPowers.includes('Mighty')) {
             extraDevotion++;
             const losersIds = currentConflict.playersIds.filter(id => id !== winnerId);
-            console.log(currentConflict, losersIds, 'XD')
             losersIds.forEach(id => {
                 dispatch(gameReducer.actions.decreasePlayerDevotion({ playerId: id, amount: 1 }));
                 console.log(`Player ${id} loses 1 devotion because ${winnerId} has Mighty`)
@@ -608,15 +607,23 @@ const calculatePlayerDevotionForMonumentType = (playerId, monuments) => {
     monuments.forEach(({ playerId }) => counter[playerId]++);
 
     let highestPlayerMonumentsCount = 0;
-    let topPlayer = undefined;
+    let topPlayers = [];
     Object.entries(counter).forEach(([player, amount]) => {
         if (amount > highestPlayerMonumentsCount) {
-            topPlayer = player;
+            topPlayers = [player];
             highestPlayerMonumentsCount = amount;
+        } else if (amount === highestPlayerMonumentsCount) {
+            topPlayers.push(player);
         }
     })
 
-    return playerId === topPlayer ? highestPlayerMonumentsCount : 0;
+    if (topPlayers.length > 1) {
+        return 0;
+    } else if (topPlayers.length === 1) {
+        return playerId === topPlayers[0] ? highestPlayerMonumentsCount : 0;
+    } else {
+        return 0;
+    }
 }
 
 export const finishCurrentConflictEffect = () => async (dispatch, getState) => {
