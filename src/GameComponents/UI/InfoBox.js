@@ -6,6 +6,7 @@ import './InfoBox.scss';
 import gameReducer, { getMessageForGameAction, isDuringAction, GAME_ACTIONS, isEventAction } from 'GameLogic/game';
 import { endActionEffect } from 'GameLogic/actions/actions';
 import { endEventEffect } from 'GameLogic/events/events';
+import { resolveWorshipfulEffect } from 'GameLogic/ankhPowers/worshipful';
 
 const InfoBox = () => {
     const dispatch = useDispatch();
@@ -16,7 +17,10 @@ const InfoBox = () => {
     const information = getMessageForGameAction(currentGameAction);
     const currentPlayer = players[currentPlayerId];
 
-    const endTurn = () => dispatch(gameReducer.actions.endTurn());
+    const endTurn = () => {
+        dispatch(resolveWorshipfulEffect());
+        dispatch(gameReducer.actions.endTurn());
+    }
     const endAction = () => dispatch(endActionEffect());
     const endEvent = () => dispatch(endEventEffect());
 

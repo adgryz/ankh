@@ -464,6 +464,8 @@ const resolveBattleResult = () => async (dispatch, getState) => {
         }
     })
 
+    await sleep(3000);
+
     if (winnersIds.length > 1) {
         await sleep(2000);
 
@@ -496,6 +498,8 @@ export const confirmTieBreakerUseEffect = () => async (dispatch, getState) => {
     dispatch(resolveBattleWinnerEffect({ winnerId: tieBreakerOwnerId }))
     dispatch(afterBattleResolutionEffect());
 }
+
+// Battle resolution 
 
 const resolveNoBattleWinnerEffect = () => async (dispatch, getState) => {
     const { conflict } = getState();
@@ -530,12 +534,22 @@ const resolveBattleWinnerEffect = ({ winnerId }) => async (dispatch, getState) =
         dispatch(gameReducer.actions.increasePlayerFollowers({ playerId: winnerId, amount: 3 }))
         console.log(`Player ${winnerId} gets 3 followers from Commanding power`);
     }
-    if (winnerPowers.includes('Glorious')) {
-        const sortedStrengths = playersStrengths.map(([playerId, str]) => str).sort((s1, s2) => s2 - s1);
-        const winnerStr = sortedStrengths[0];
-        const secondStr = sortedStrengths[1];
-        if (winnerStr >= secondStr + 2) {
+
+    const sortedStrengths = Object.entries(playersStrengths).map(([playerId, str]) => str).sort((s1, s2) => s2 - s1);
+    const winnerStr = sortedStrengths[0];
+    const secondStr = sortedStrengths[1];
+    if (winnerStr >= secondStr + 2) {
+        if (winnerPowers.includes('Glorious')) {
             extraDevotion++;
+        }
+        if (winnerPowers.includes('Mighty')) {
+            extraDevotion++;
+            const losersIds = currentConflict.playersIds.filter(id => id !== winnerId);
+            console.log(currentConflict, losersIds, 'XD')
+            losersIds.forEach(id => {
+                dispatch(gameReducer.actions.decreasePlayerDevotion({ playerId: id, amount: 1 }));
+                console.log(`Player ${id} loses 1 devotion because ${winnerId} has Mighty`)
+            })
         }
     }
 

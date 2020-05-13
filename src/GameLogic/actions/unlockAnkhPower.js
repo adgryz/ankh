@@ -3,7 +3,8 @@ import figuresReducer from 'GameLogic/figures';
 import { endActionEffect } from 'GameLogic/actions/actions';
 
 export const unlockAnkhPowerEffect = ({ powerName, powerLevel }) => (dispatch, getState) => {
-    dispatch(gameReducer.actions.decreaseFollowers({ amount: powerLevel }));
+    const { game: { currentPlayerId } } = getState();
+    dispatch(gameReducer.actions.decreasePlayerFollowers({ amount: powerLevel, playerId: currentPlayerId }));
     dispatch(gameReducer.actions.unlockAnkhPower({ powerName }));
 
     if (powerName === 'Temple Attuned') {

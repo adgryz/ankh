@@ -38,7 +38,7 @@ export const summonFigureEffect = ({ x, y, }) => (dispatch, getState) => {
     }
 
     const adjacentPyramids = getAdjacentPyramids(x, y, hexes, playerId) // for Pyramids Attuned
-    if (hasPyramidAttuned) {
+    if (hasPyramidAttuned && localStorage.getItem('mode') !== 'cheat') {
         // TODO - figures adjacent to more than one pyramid
         const adjacentPyramidsSummonData = summonedFiguresAdjacentPyramids.flat();
 
@@ -73,7 +73,6 @@ export const summonFigureEffect = ({ x, y, }) => (dispatch, getState) => {
         const spotsAbleToSummonAmount = player.monuments.pyramidsIds.length + 1
         const newFiguresPool = newGame.players[newGame.currentPlayerId].figuresPool;
 
-        console.log(summonedAmount, spotsAbleToSummonAmount)
         if (summonedAmount === spotsAbleToSummonAmount || newFiguresPool.length === 0) {
             dispatch(endActionEffect());
         }

@@ -3,7 +3,7 @@ export const amun = {
     name: 'amun',
     title: 'The Hidden One',
     imgSrc: require('./amun.png'),
-    unlockedPowers: [],
+    unlockedPowers: ['Worshipful'],
 }
 
 export const ra = {
@@ -11,5 +11,5 @@ export const ra = {
     name: 'ra',
     title: 'The Sun and The Light',
     imgSrc: require('./ra.png'),
-    unlockedPowers: ['Pyramid Attuned'],
+    unlockedPowers: ['Glorious', 'Mighty'],
 }

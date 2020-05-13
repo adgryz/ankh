@@ -237,18 +237,10 @@ const game = createSlice({
             player.god.unlockedPowers.push(payload.powerName)
         },
         // FOLLOWERS
-        decreaseFollowers: (state, { payload }) => {
-            const player = state.players[state.currentPlayerId];
-            player.followers -= payload.amount;
-        },
-        increaseFollowers: (state, { payload }) => {
-            const player = state.players[state.currentPlayerId];
-            player.followers += payload.amount;
-        },
         decreasePlayerFollowers: (state, { payload }) => {
             const { playerId, amount } = payload;
             const player = state.players[playerId];
-            player.followers -= amount;
+            player.followers = Math.max(player.followers - amount, 0);
         },
         increasePlayerFollowers: (state, { payload }) => {
             const { playerId, amount } = payload;
@@ -259,7 +251,7 @@ const game = createSlice({
         decreasePlayerDevotion: (state, { payload }) => {
             const { playerId, amount } = payload;
             const player = state.players[playerId];
-            player.devotion -= amount;
+            player.devotion = Math.max(player.devotion - amount, 0);
         },
         increasePlayerDevotion: (state, { payload }) => {
             const { playerId, amount } = payload;

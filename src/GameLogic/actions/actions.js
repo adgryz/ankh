@@ -1,8 +1,8 @@
 import gameReducer, { GAME_ACTIONS } from 'GameLogic/game';
 import { ACTIONS_IDS } from './const'
 import { gainFollowersEffect } from './gainFollowers';
-import { summonStartEffect } from './summonFigure';
 import { resolveCurrentEventEffect } from 'GameLogic/events/events';
+import { resolveWorshipfulEffect } from 'GameLogic/ankhPowers/worshipful';
 
 export const selectActionEffect = ({ actionId }) => (dispatch, getState) => {
     dispatch(gameReducer.actions.setCurrentActionId({ actionId }))
@@ -48,21 +48,22 @@ export const endActionEffect = () => (dispatch, getState) => {
     // Action reached max index
     if (nextGame.actions[actionId].index === nextGame.actions[actionId].maxIndex) {
         dispatch(gameReducer.actions.moveEventIndex());
+        dispatch(resolveWorshipfulEffect());
         dispatch(resolveCurrentEventEffect());
         return;
     }
 
     // Played 2 actions
     if (nextGame.playedActions === 2) {
+        dispatch(resolveWorshipfulEffect());
         dispatch(gameReducer.actions.endTurn());
         return;
     }
 
     // Played Ankh action
     if (actionId === ACTIONS_IDS.ANKH) {
+        dispatch(resolveWorshipfulEffect());
         dispatch(gameReducer.actions.endTurn());
         return;
     }
-
-
 };
