@@ -11,5 +11,5 @@ export const ra = {
     name: 'ra',
     title: 'The Sun and The Light',
     imgSrc: require('./ra.png'),
-    unlockedPowers: [],
+    unlockedPowers: ['Pyramid Attuned'],
 }

@@ -143,6 +143,7 @@ const getInitialState = () => {
         currentActionId: null,
         initialActionsIndex: 3,
         movedFiguresIds: [],
+        summonedFiguresAdjacentPyramids: [], // types of adjacency of summoned figures: [ [p1,p2], [no-pyramid], [p5], [p2,p3,p4] ]
     }
 }
 
@@ -169,7 +170,7 @@ const getPlayerObjectIds = (object, playerId) => Object.values(object).filter(x 
 export const isDuringAction = currentGameActionId => {
     return [
         GAME_ACTIONS.moveFigure,
-        GAME_ACTIONS.selectFigureToSummon,
+        GAME_ACTIONS.summonFigure,
         GAME_ACTIONS.selectWhichRegionWillPreserveItsNumber].includes(currentGameActionId)
 }
 
@@ -264,6 +265,10 @@ const game = createSlice({
             const { playerId, amount } = payload;
             const player = state.players[playerId];
             player.devotion += amount;
+        },
+        // SUMMON 
+        addFigureToSummonedFiguresPA: (state, { payload }) => {
+            state.summonedFiguresAdjacentPyramids.push(payload.adjacentPyramids);
         },
         // POOL
         setSelectedFigureFromPool: (state, { payload }) => {

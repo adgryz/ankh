@@ -1,6 +1,7 @@
 import gameReducer, { GAME_ACTIONS } from 'GameLogic/game';
 import { ACTIONS_IDS } from './const'
 import { gainFollowersEffect } from './gainFollowers';
+import { summonStartEffect } from './summonFigure';
 import { resolveCurrentEventEffect } from 'GameLogic/events/events';
 
 export const selectActionEffect = ({ actionId }) => (dispatch, getState) => {
